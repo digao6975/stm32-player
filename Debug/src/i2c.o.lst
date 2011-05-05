@@ -1,0 +1,151 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"i2c.c"
+  23              	.Ltext0:
+  24              		.file 1 "../src/i2c.c"
+ 17898              		.align	1
+ 17899              		.global	init_i2c
+ 17900              		.thumb
+ 17901              		.thumb_func
+ 17903              	init_i2c:
+ 17904              	.LFB29:
+   1:../src/i2c.c  **** /*
+   2:../src/i2c.c  ****  * i2c.c
+   3:../src/i2c.c  ****  *
+   4:../src/i2c.c  ****  *  Created on: 22-04-2011
+   5:../src/i2c.c  ****  *      Author: Przemek
+   6:../src/i2c.c  ****  */
+   7:../src/i2c.c  **** 
+   8:../src/i2c.c  **** #include "stm32f10x.h"
+   9:../src/i2c.c  **** #include "i2c.h"
+  10:../src/i2c.c  **** 
+  11:../src/i2c.c  **** void init_i2c(void) {
+ 17905              		.loc 1 11 0
+ 17906              		.cfi_startproc
+ 17907              		@ args = 0, pretend = 0, frame = 24
+ 17908              		@ frame_needed = 0, uses_anonymous_args = 0
+ 17909 0000 7FB5     		push	{r0, r1, r2, r3, r4, r5, r6, lr}
+ 17910              	.LCFI0:
+ 17911              		.cfi_def_cfa_offset 32
+  12:../src/i2c.c  **** 	I2C_InitTypeDef I2C_InitStruct;
+  13:../src/i2c.c  **** 	GPIO_InitTypeDef GPIO_InitStruct;
+  14:../src/i2c.c  **** 
+  15:../src/i2c.c  **** 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
+ 17912              		.loc 1 15 0
+ 17913 0002 0121     		movs	r1, #1
+ 17914              		.cfi_offset 14, -4
+ 17915              		.cfi_offset 6, -8
+ 17916              		.cfi_offset 5, -12
+ 17917              		.cfi_offset 4, -16
+ 17918              		.cfi_offset 3, -20
+ 17919              		.cfi_offset 2, -24
+ 17920              		.cfi_offset 1, -28
+ 17921              		.cfi_offset 0, -32
+ 17922 0004 4FF48000 		mov	r0, #4194304
+ 17923 0008 FFF7FEFF 		bl	RCC_APB1PeriphClockCmd
+  16:../src/i2c.c  ****  	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+ 17924              		.loc 1 16 0
+ 17925 000c 0120     		movs	r0, #1
+ 17926 000e 0146     		mov	r1, r0
+ 17927 0010 FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  17:../src/i2c.c  **** 
+  18:../src/i2c.c  **** 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+ 17928              		.loc 1 18 0
+ 17929 0014 0323     		movs	r3, #3
+ 17930 0016 8DF81630 		strb	r3, [sp, #22]
+  19:../src/i2c.c  **** 
+  20:../src/i2c.c  **** 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11; // SCL,SDA
+ 17931              		.loc 1 20 0
+ 17932 001a 4FF44063 		mov	r3, #3072	@ movhi
+ 17933 001e ADF81430 		strh	r3, [sp, #20]	@ movhi
+  21:../src/i2c.c  **** 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_OD;
+  22:../src/i2c.c  **** 	GPIO_Init(GPIOB, &GPIO_InitStruct);
+ 17934              		.loc 1 22 0
+ 17935 0022 05A9     		add	r1, sp, #20
+  21:../src/i2c.c  **** 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_OD;
+ 17936              		.loc 1 21 0
+ 17937 0024 1C23     		movs	r3, #28
+ 17938              		.loc 1 22 0
+ 17939 0026 0F48     		ldr	r0, .L2
+  21:../src/i2c.c  **** 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_OD;
+ 17940              		.loc 1 21 0
+ 17941 0028 8DF81730 		strb	r3, [sp, #23]
+ 17942              		.loc 1 22 0
+ 17943 002c FFF7FEFF 		bl	GPIO_Init
+  23:../src/i2c.c  **** 
+  24:../src/i2c.c  **** 	I2C_SoftwareResetCmd(I2C2, ENABLE);
+ 17944              		.loc 1 24 0
+ 17945 0030 0121     		movs	r1, #1
+ 17946 0032 0D48     		ldr	r0, .L2+4
+ 17947 0034 FFF7FEFF 		bl	I2C_SoftwareResetCmd
+  25:../src/i2c.c  **** 
+  26:../src/i2c.c  **** 	I2C_StructInit(&I2C_InitStruct);
+ 17948              		.loc 1 26 0
+ 17949 0038 01A8     		add	r0, sp, #4
+ 17950 003a FFF7FEFF 		bl	I2C_StructInit
+  27:../src/i2c.c  **** 	I2C_DeInit(I2C2);
+ 17951              		.loc 1 27 0
+ 17952 003e 0A48     		ldr	r0, .L2+4
+ 17953 0040 FFF7FEFF 		bl	I2C_DeInit
+  28:../src/i2c.c  **** 	I2C_InitStruct.I2C_ClockSpeed = 100000;
+ 17954              		.loc 1 28 0
+ 17955 0044 094B     		ldr	r3, .L2+8
+  29:../src/i2c.c  **** 	I2C_InitStruct.I2C_Ack = I2C_Ack_Enable;
+  30:../src/i2c.c  **** 	I2C_Init(I2C2, &I2C_InitStruct);
+ 17956              		.loc 1 30 0
+ 17957 0046 01A9     		add	r1, sp, #4
+  28:../src/i2c.c  **** 	I2C_InitStruct.I2C_ClockSpeed = 100000;
+ 17958              		.loc 1 28 0
+ 17959 0048 0193     		str	r3, [sp, #4]
+ 17960              		.loc 1 30 0
+ 17961 004a 0748     		ldr	r0, .L2+4
+  29:../src/i2c.c  **** 	I2C_InitStruct.I2C_Ack = I2C_Ack_Enable;
+ 17962              		.loc 1 29 0
+ 17963 004c 4FF48063 		mov	r3, #1024	@ movhi
+ 17964 0050 ADF80E30 		strh	r3, [sp, #14]	@ movhi
+ 17965              		.loc 1 30 0
+ 17966 0054 FFF7FEFF 		bl	I2C_Init
+  31:../src/i2c.c  **** 	I2C_Cmd(I2C2, ENABLE);
+ 17967              		.loc 1 31 0
+ 17968 0058 0348     		ldr	r0, .L2+4
+ 17969 005a 0121     		movs	r1, #1
+ 17970 005c FFF7FEFF 		bl	I2C_Cmd
+  32:../src/i2c.c  **** }
+ 17971              		.loc 1 32 0
+ 17972 0060 07B0     		add	sp, sp, #28
+ 17973 0062 00BD     		pop	{pc}
+ 17974              	.L3:
+ 17975              		.align	2
+ 17976              	.L2:
+ 17977 0064 000C0140 		.word	1073810432
+ 17978 0068 00580040 		.word	1073764352
+ 17979 006c A0860100 		.word	100000
+ 17980              		.cfi_endproc
+ 17981              	.LFE29:
+ 17983              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 i2c.c
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccBevQt9.s:17898  .text:00000000 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccBevQt9.s:17903  .text:00000000 init_i2c
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccBevQt9.s:17977  .text:00000064 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+RCC_APB1PeriphClockCmd
+RCC_APB2PeriphClockCmd
+GPIO_Init
+I2C_SoftwareResetCmd
+I2C_StructInit
+I2C_DeInit
+I2C_Init
+I2C_Cmd

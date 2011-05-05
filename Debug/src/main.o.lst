@@ -1,0 +1,691 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"main.c"
+  23              	.Ltext0:
+  24              		.file 1 "../src/main.c"
+ 20147              		.align	1
+ 20148              		.global	clkInit
+ 20149              		.thumb
+ 20150              		.thumb_func
+ 20152              	clkInit:
+ 20153              	.LFB30:
+   1:../src/main.c **** 
+   2:../src/main.c **** /* Includes */
+   3:../src/main.c **** #include <stddef.h>
+   4:../src/main.c **** #include "stm32f10x.h"
+   5:../src/main.c **** #include "main.h"
+   6:../src/main.c **** 
+   7:../src/main.c **** 
+   8:../src/main.c **** SD_CardInfo SDCardInfo;
+   9:../src/main.c **** SD_Error Status = SD_OK;
+  10:../src/main.c **** BYTE buffer[1024]; // file copy buffer
+  11:../src/main.c **** 
+  12:../src/main.c **** System_Function State = MP3_Player;
+  13:../src/main.c **** /**
+  14:../src/main.c **** **===========================================================================
+  15:../src/main.c **** **
+  16:../src/main.c **** **  Abstract: main program
+  17:../src/main.c **** **
+  18:../src/main.c **** **===========================================================================
+  19:../src/main.c **** */
+  20:../src/main.c **** int main(void)
+  21:../src/main.c **** {
+  22:../src/main.c **** 	char path[50]={""};
+  23:../src/main.c **** 	int i;
+  24:../src/main.c **** 	FATFS fs;            		// Work area (file system object) for logical drive
+  25:../src/main.c ****     FIL fsrc, fdst;      		// file objects
+  26:../src/main.c **** 
+  27:../src/main.c ****     FRESULT res;         		// FatFs function common result code
+  28:../src/main.c ****     UINT br, bw;         		// File R/W count
+  29:../src/main.c ****     FILINFO finfo;
+  30:../src/main.c ****     DIR dirs;
+  31:../src/main.c ****     UINT bytes_saved;
+  32:../src/main.c **** 
+  33:../src/main.c **** 	clkInit();
+  34:../src/main.c **** 	pinSetup();
+  35:../src/main.c **** 
+  36:../src/main.c **** 	VS1003_GPIO_conf();
+  37:../src/main.c **** 	VS1003_SPI_conf();
+  38:../src/main.c **** 	VS1003_Start();
+  39:../src/main.c **** 
+  40:../src/main.c **** 	SD_Nvic_conf();
+  41:../src/main.c **** 	SD_Config();
+  42:../src/main.c **** 
+  43:../src/main.c **** 	//temporary
+  44:../src/main.c **** 	disk_initialize(0);
+  45:../src/main.c **** 	res = f_mount(0, &fs);
+  46:../src/main.c **** 	res = f_opendir(&dirs, path);
+  47:../src/main.c **** 	//res = f_open(&fdst, "test.txt", FA_CREATE_ALWAYS);
+  48:../src/main.c **** 	//res = f_close(&fdst);
+  49:../src/main.c **** 	res = f_open(&fsrc, "test.mp3", FA_READ);
+  50:../src/main.c **** 	//res = f_write(&fdst,"testuje",7,&bytes_saved);
+  51:../src/main.c **** 	//res = f_close(&fdst);
+  52:../src/main.c **** 	//SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
+  53:../src/main.c **** 	//SysTick_Config(9000000);
+  54:../src/main.c **** 	while (1)
+  55:../src/main.c **** 	{
+  56:../src/main.c **** 		if ( State == MP3_Player )
+  57:../src/main.c **** 		{
+  58:../src/main.c **** 			while(f_read(&fsrc, buffer, sizeof(buffer), &br) == 0)
+  59:../src/main.c **** 			{
+  60:../src/main.c **** 			SCI_ChipSelect(RESET);
+  61:../src/main.c **** 			SDI_ChipSelect(SET);
+  62:../src/main.c **** 			for (i=0;i<sizeof(buffer);i++)
+  63:../src/main.c **** 			{
+  64:../src/main.c **** 				while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+  65:../src/main.c **** 				SPIPutChar(buffer[i]);
+  66:../src/main.c **** 			}
+  67:../src/main.c **** 			/*
+  68:../src/main.c **** 			res = f_read(&fsrc, buffer, sizeof(buffer), &br);
+  69:../src/main.c **** 			if (res == 0 && br != 0 )
+  70:../src/main.c **** 			VS1003_SendMusicBytes(buffer,br);
+  71:../src/main.c **** 			else
+  72:../src/main.c **** 				break;
+  73:../src/main.c **** 			*/
+  74:../src/main.c **** 			}
+  75:../src/main.c **** 		}
+  76:../src/main.c **** 
+  77:../src/main.c **** 	}
+  78:../src/main.c **** }
+  79:../src/main.c **** 
+  80:../src/main.c **** 
+  81:../src/main.c **** void clkInit() {
+ 20154              		.loc 1 81 0
+ 20155              		.cfi_startproc
+ 20156              		@ args = 0, pretend = 0, frame = 0
+ 20157              		@ frame_needed = 0, uses_anonymous_args = 0
+ 20158 0000 08B5     		push	{r3, lr}
+ 20159              	.LCFI0:
+ 20160              		.cfi_def_cfa_offset 8
+  82:../src/main.c **** 	/* Konfiguracja zegara */
+  83:../src/main.c **** 
+  84:../src/main.c **** 	/* Reset RCC (na wszelki wypadek) */
+  85:../src/main.c **** 	RCC_DeInit();
+ 20161              		.loc 1 85 0
+ 20162              		.cfi_offset 14, -4
+ 20163              		.cfi_offset 3, -8
+ 20164 0002 FFF7FEFF 		bl	RCC_DeInit
+  86:../src/main.c **** 
+  87:../src/main.c **** 	/* W³¹czenie HSE */
+  88:../src/main.c **** 	RCC_HSEConfig(RCC_HSE_ON);
+ 20165              		.loc 1 88 0
+ 20166 0006 4FF48030 		mov	r0, #65536
+ 20167 000a FFF7FEFF 		bl	RCC_HSEConfig
+ 20168              	.L2:
+  89:../src/main.c **** 
+  90:../src/main.c **** 	/* Oczekiwanie na gotowoœæ HSE */
+  91:../src/main.c **** 	while (RCC_GetFlagStatus(RCC_FLAG_HSERDY) == RESET) {
+ 20169              		.loc 1 91 0 discriminator 1
+ 20170 000e 3120     		movs	r0, #49
+ 20171 0010 FFF7FEFF 		bl	RCC_GetFlagStatus
+ 20172 0014 0028     		cmp	r0, #0
+ 20173 0016 FAD0     		beq	.L2
+  92:../src/main.c **** 	}
+  93:../src/main.c **** 
+  94:../src/main.c **** 	/* W³¹czenie opóŸnieñ dla FLASH */
+  95:../src/main.c **** 	FLASH_PrefetchBufferCmd(FLASH_PrefetchBuffer_Enable);
+ 20174              		.loc 1 95 0
+ 20175 0018 1020     		movs	r0, #16
+ 20176 001a FFF7FEFF 		bl	FLASH_PrefetchBufferCmd
+  96:../src/main.c **** 	FLASH_SetLatency(FLASH_Latency_2);
+ 20177              		.loc 1 96 0
+ 20178 001e 0220     		movs	r0, #2
+ 20179 0020 FFF7FEFF 		bl	FLASH_SetLatency
+  97:../src/main.c **** 
+  98:../src/main.c **** 	/* HCLK = SYSCLK */
+  99:../src/main.c **** 	RCC_HCLKConfig(RCC_SYSCLK_Div1);
+ 20180              		.loc 1 99 0
+ 20181 0024 0020     		movs	r0, #0
+ 20182 0026 FFF7FEFF 		bl	RCC_HCLKConfig
+ 100:../src/main.c **** 
+ 101:../src/main.c **** 	/* PCLK2 = HCLK */
+ 102:../src/main.c **** 	RCC_PCLK2Config(RCC_HCLK_Div1);
+ 20183              		.loc 1 102 0
+ 20184 002a 0020     		movs	r0, #0
+ 20185 002c FFF7FEFF 		bl	RCC_PCLK2Config
+ 103:../src/main.c **** 
+ 104:../src/main.c **** 	/* PCLK1 = HCLK/2 */
+ 105:../src/main.c **** 	RCC_PCLK1Config(RCC_HCLK_Div2);
+ 20186              		.loc 1 105 0
+ 20187 0030 4FF48060 		mov	r0, #1024
+ 20188 0034 FFF7FEFF 		bl	RCC_PCLK1Config
+ 106:../src/main.c **** 
+ 107:../src/main.c **** 	/* PLLCLK = 8MHz * 9 = 72 MHz */
+ 108:../src/main.c **** 	RCC_PLLConfig(RCC_PLLSource_HSE_Div1, RCC_PLLMul_9);
+ 20189              		.loc 1 108 0
+ 20190 0038 4FF48030 		mov	r0, #65536
+ 20191 003c 4FF4E011 		mov	r1, #1835008
+ 20192 0040 FFF7FEFF 		bl	RCC_PLLConfig
+ 109:../src/main.c **** 
+ 110:../src/main.c **** 	/* W³¹czenie PLL */
+ 111:../src/main.c **** 	RCC_PLLCmd(ENABLE);
+ 20193              		.loc 1 111 0
+ 20194 0044 0120     		movs	r0, #1
+ 20195 0046 FFF7FEFF 		bl	RCC_PLLCmd
+ 20196              	.L3:
+ 112:../src/main.c **** 
+ 113:../src/main.c **** 	/* Oczekiwanie na gotowoœæ PLL */
+ 114:../src/main.c **** 	while (RCC_GetFlagStatus(RCC_FLAG_PLLRDY) == RESET) {
+ 20197              		.loc 1 114 0 discriminator 1
+ 20198 004a 3920     		movs	r0, #57
+ 20199 004c FFF7FEFF 		bl	RCC_GetFlagStatus
+ 20200 0050 0028     		cmp	r0, #0
+ 20201 0052 FAD0     		beq	.L3
+ 115:../src/main.c **** 	}
+ 116:../src/main.c **** 
+ 117:../src/main.c **** 	/* Wybór PLL na zegar systemowy */
+ 118:../src/main.c **** 	RCC_SYSCLKConfig(RCC_SYSCLKSource_PLLCLK);
+ 20202              		.loc 1 118 0
+ 20203 0054 0220     		movs	r0, #2
+ 20204 0056 FFF7FEFF 		bl	RCC_SYSCLKConfig
+ 20205              	.L4:
+ 119:../src/main.c **** 
+ 120:../src/main.c **** 	/* Oczekiwanie na wybór zegara systemowego */
+ 121:../src/main.c **** 	while (RCC_GetSYSCLKSource() != 0x08) {
+ 20206              		.loc 1 121 0 discriminator 1
+ 20207 005a FFF7FEFF 		bl	RCC_GetSYSCLKSource
+ 20208 005e 0828     		cmp	r0, #8
+ 20209 0060 FBD1     		bne	.L4
+ 122:../src/main.c **** 	}
+ 123:../src/main.c **** }
+ 20210              		.loc 1 123 0
+ 20211 0062 08BD     		pop	{r3, pc}
+ 20212              		.cfi_endproc
+ 20213              	.LFE30:
+ 20215              		.align	1
+ 20216              		.global	pinSetup
+ 20217              		.thumb
+ 20218              		.thumb_func
+ 20220              	pinSetup:
+ 20221              	.LFB31:
+ 124:../src/main.c **** 
+ 125:../src/main.c **** void pinSetup() {
+ 20222              		.loc 1 125 0
+ 20223              		.cfi_startproc
+ 20224              		@ args = 0, pretend = 0, frame = 8
+ 20225              		@ frame_needed = 0, uses_anonymous_args = 0
+ 20226 0064 13B5     		push	{r0, r1, r4, lr}
+ 20227              	.LCFI1:
+ 20228              		.cfi_def_cfa_offset 16
+ 126:../src/main.c **** 	GPIO_InitTypeDef GPIO_InitStruct;
+ 127:../src/main.c **** 
+ 128:../src/main.c **** 	// wlaczenie zegara dla GPIO
+ 129:../src/main.c **** 	RCC_APB2PeriphClockCmd(LED1_PORT_CLK | LED23_PORT_CLK, ENABLE);
+ 20229              		.loc 1 129 0
+ 20230 0066 2820     		movs	r0, #40
+ 20231              		.cfi_offset 14, -4
+ 20232              		.cfi_offset 4, -8
+ 20233              		.cfi_offset 1, -12
+ 20234              		.cfi_offset 0, -16
+ 20235 0068 0121     		movs	r1, #1
+ 20236 006a FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+ 130:../src/main.c **** 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
+ 20237              		.loc 1 130 0
+ 20238 006e 0121     		movs	r1, #1
+ 20239 0070 4FF48000 		mov	r0, #4194304
+ 20240 0074 FFF7FEFF 		bl	RCC_APB1PeriphClockCmd
+ 131:../src/main.c **** 
+ 132:../src/main.c **** 	// konfiguracja pinów
+ 133:../src/main.c **** 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_Out_PP;
+ 20241              		.loc 1 133 0
+ 20242 0078 1023     		movs	r3, #16
+ 20243 007a 8DF80730 		strb	r3, [sp, #7]
+ 134:../src/main.c **** 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;
+ 20244              		.loc 1 134 0
+ 20245 007e 0E3B     		subs	r3, r3, #14
+ 135:../src/main.c **** 	GPIO_InitStruct.GPIO_Pin = LED1_PIN;
+ 20246              		.loc 1 135 0
+ 20247 0080 02AC     		add	r4, sp, #8
+ 134:../src/main.c **** 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_2MHz;
+ 20248              		.loc 1 134 0
+ 20249 0082 8DF80630 		strb	r3, [sp, #6]
+ 20250              		.loc 1 135 0
+ 20251 0086 2023     		movs	r3, #32
+ 20252 0088 24F8043D 		strh	r3, [r4, #-4]!	@ movhi
+ 136:../src/main.c **** 	GPIO_Init(LED1_PORT, &GPIO_InitStruct);
+ 20253              		.loc 1 136 0
+ 20254 008c 2146     		mov	r1, r4
+ 20255 008e 0548     		ldr	r0, .L6
+ 20256 0090 FFF7FEFF 		bl	GPIO_Init
+ 137:../src/main.c **** 
+ 138:../src/main.c **** 	GPIO_InitStruct.GPIO_Pin = LED2_PIN | LED3_PIN;
+ 20257              		.loc 1 138 0
+ 20258 0094 4823     		movs	r3, #72
+ 139:../src/main.c **** 	GPIO_Init(LED23_PORT, &GPIO_InitStruct);
+ 20259              		.loc 1 139 0
+ 20260 0096 0448     		ldr	r0, .L6+4
+ 20261 0098 2146     		mov	r1, r4
+ 138:../src/main.c **** 	GPIO_InitStruct.GPIO_Pin = LED2_PIN | LED3_PIN;
+ 20262              		.loc 1 138 0
+ 20263 009a ADF80430 		strh	r3, [sp, #4]	@ movhi
+ 20264              		.loc 1 139 0
+ 20265 009e FFF7FEFF 		bl	GPIO_Init
+ 140:../src/main.c **** 
+ 141:../src/main.c **** }
+ 20266              		.loc 1 141 0
+ 20267 00a2 1CBD     		pop	{r2, r3, r4, pc}
+ 20268              	.L7:
+ 20269              		.align	2
+ 20270              	.L6:
+ 20271 00a4 000C0140 		.word	1073810432
+ 20272 00a8 00140140 		.word	1073812480
+ 20273              		.cfi_endproc
+ 20274              	.LFE31:
+ 20276              		.align	1
+ 20277              		.global	SD_Nvic_conf
+ 20278              		.thumb
+ 20279              		.thumb_func
+ 20281              	SD_Nvic_conf:
+ 20282              	.LFB32:
+ 142:../src/main.c **** 
+ 143:../src/main.c **** void SD_Nvic_conf(){
+ 20283              		.loc 1 143 0
+ 20284              		.cfi_startproc
+ 20285              		@ args = 0, pretend = 0, frame = 8
+ 20286              		@ frame_needed = 0, uses_anonymous_args = 0
+ 20287 00ac 07B5     		push	{r0, r1, r2, lr}
+ 20288              	.LCFI2:
+ 20289              		.cfi_def_cfa_offset 16
+ 144:../src/main.c **** 	NVIC_InitTypeDef NVIC_InitStructure;
+ 145:../src/main.c **** 
+ 146:../src/main.c **** 	/* Configure the NVIC Preemption Priority Bits */
+ 147:../src/main.c **** 	NVIC_PriorityGroupConfig(NVIC_PriorityGroup_1);
+ 20290              		.loc 1 147 0
+ 20291 00ae 4FF4C060 		mov	r0, #1536
+ 20292              		.cfi_offset 14, -4
+ 20293              		.cfi_offset 2, -8
+ 20294              		.cfi_offset 1, -12
+ 20295              		.cfi_offset 0, -16
+ 20296 00b2 FFF7FEFF 		bl	NVIC_PriorityGroupConfig
+ 148:../src/main.c **** 
+ 149:../src/main.c **** 	NVIC_InitStructure.NVIC_IRQChannel = SDIO_IRQn;					  //ÅäÖÃSDIOÖÐ¶ÏÔ´
+ 20297              		.loc 1 149 0
+ 20298 00b6 3123     		movs	r3, #49
+ 20299 00b8 8DF80430 		strb	r3, [sp, #4]
+ 150:../src/main.c **** 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+ 20300              		.loc 1 150 0
+ 20301 00bc 313B     		subs	r3, r3, #49
+ 20302 00be 8DF80530 		strb	r3, [sp, #5]
+ 151:../src/main.c **** 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+ 20303              		.loc 1 151 0
+ 20304 00c2 8DF80630 		strb	r3, [sp, #6]
+ 152:../src/main.c **** 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+ 153:../src/main.c **** 	NVIC_Init(&NVIC_InitStructure);
+ 20305              		.loc 1 153 0
+ 20306 00c6 01A8     		add	r0, sp, #4
+ 152:../src/main.c **** 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+ 20307              		.loc 1 152 0
+ 20308 00c8 0133     		adds	r3, r3, #1
+ 20309 00ca 8DF80730 		strb	r3, [sp, #7]
+ 20310              		.loc 1 153 0
+ 20311 00ce FFF7FEFF 		bl	NVIC_Init
+ 154:../src/main.c **** 
+ 155:../src/main.c **** }
+ 20312              		.loc 1 155 0
+ 20313 00d2 0EBD     		pop	{r1, r2, r3, pc}
+ 20314              		.cfi_endproc
+ 20315              	.LFE32:
+ 20317              		.align	1
+ 20318              		.global	SD_Config
+ 20319              		.thumb
+ 20320              		.thumb_func
+ 20322              	SD_Config:
+ 20323              	.LFB33:
+ 156:../src/main.c **** 
+ 157:../src/main.c **** void SD_Config(void){
+ 20324              		.loc 1 157 0
+ 20325              		.cfi_startproc
+ 20326              		@ args = 0, pretend = 0, frame = 0
+ 20327              		@ frame_needed = 0, uses_anonymous_args = 0
+ 20328 00d4 10B5     		push	{r4, lr}
+ 20329              	.LCFI3:
+ 20330              		.cfi_def_cfa_offset 8
+ 158:../src/main.c **** 	  Status = SD_Init();
+ 20331              		.loc 1 158 0
+ 20332              		.cfi_offset 14, -4
+ 20333              		.cfi_offset 4, -8
+ 20334 00d6 FFF7FEFF 		bl	SD_Init
+ 20335 00da 124C     		ldr	r4, .L14
+ 159:../src/main.c **** 
+ 160:../src/main.c **** 	  if (Status == SD_OK)
+ 20336              		.loc 1 160 0
+ 20337 00dc 2A28     		cmp	r0, #42
+ 158:../src/main.c **** 	  Status = SD_Init();
+ 20338              		.loc 1 158 0
+ 20339 00de 2070     		strb	r0, [r4, #0]
+ 20340              		.loc 1 160 0
+ 20341 00e0 03D1     		bne	.L10
+ 161:../src/main.c **** 	  {
+ 162:../src/main.c **** 	    /*----------------- Read CSD/CID MSD registers ------------------*/
+ 163:../src/main.c **** 	    Status = SD_GetCardInfo(&SDCardInfo);
+ 20342              		.loc 1 163 0
+ 20343 00e2 1148     		ldr	r0, .L14+4
+ 20344 00e4 FFF7FEFF 		bl	SD_GetCardInfo
+ 20345 00e8 2070     		strb	r0, [r4, #0]
+ 20346              	.L10:
+ 164:../src/main.c **** 	  }
+ 165:../src/main.c **** 
+ 166:../src/main.c **** 	  if (Status == SD_OK)
+ 20347              		.loc 1 166 0
+ 20348 00ea 2378     		ldrb	r3, [r4, #0]	@ zero_extendqisi2
+ 20349 00ec 2A2B     		cmp	r3, #42
+ 20350 00ee 07D1     		bne	.L11
+ 167:../src/main.c **** 	  {
+ 168:../src/main.c **** 	    /*----------------- Select Card --------------------------------*/
+ 169:../src/main.c **** 	    Status = SD_SelectDeselect((u32) (SDCardInfo.RCA << 16));
+ 20351              		.loc 1 169 0
+ 20352 00f0 0D4B     		ldr	r3, .L14+4
+ 20353 00f2 B3F84C00 		ldrh	r0, [r3, #76]
+ 20354 00f6 0004     		lsls	r0, r0, #16
+ 20355 00f8 FFF7FEFF 		bl	SD_SelectDeselect
+ 20356 00fc 094B     		ldr	r3, .L14
+ 20357 00fe 1870     		strb	r0, [r3, #0]
+ 20358              	.L11:
+ 170:../src/main.c **** 	  }
+ 171:../src/main.c **** 
+ 172:../src/main.c **** 	  if (Status == SD_OK)
+ 20359              		.loc 1 172 0
+ 20360 0100 2378     		ldrb	r3, [r4, #0]	@ zero_extendqisi2
+ 20361 0102 2A2B     		cmp	r3, #42
+ 20362 0104 05D1     		bne	.L12
+ 173:../src/main.c **** 	  {
+ 174:../src/main.c **** 	    Status = SD_EnableWideBusOperation(SDIO_BusWide_4b);
+ 20363              		.loc 1 174 0
+ 20364 0106 4FF40060 		mov	r0, #2048
+ 20365 010a FFF7FEFF 		bl	SD_EnableWideBusOperation
+ 20366 010e 054B     		ldr	r3, .L14
+ 20367 0110 1870     		strb	r0, [r3, #0]
+ 20368              	.L12:
+ 175:../src/main.c **** 	  }
+ 176:../src/main.c **** 
+ 177:../src/main.c **** 	  /* Set Device Transfer Mode to DMA */
+ 178:../src/main.c **** 	  if (Status == SD_OK)
+ 20369              		.loc 1 178 0
+ 20370 0112 2378     		ldrb	r3, [r4, #0]	@ zero_extendqisi2
+ 20371 0114 2A2B     		cmp	r3, #42
+ 20372 0116 04D1     		bne	.L9
+ 179:../src/main.c **** 	  {
+ 180:../src/main.c **** 	    Status = SD_SetDeviceMode(SD_DMA_MODE);//oet
+ 20373              		.loc 1 180 0
+ 20374 0118 0020     		movs	r0, #0
+ 20375 011a FFF7FEFF 		bl	SD_SetDeviceMode
+ 20376 011e 014B     		ldr	r3, .L14
+ 20377 0120 1870     		strb	r0, [r3, #0]
+ 20378              	.L9:
+ 20379 0122 10BD     		pop	{r4, pc}
+ 20380              	.L15:
+ 20381              		.align	2
+ 20382              	.L14:
+ 20383 0124 00000000 		.word	.LANCHOR0
+ 20384 0128 00000000 		.word	SDCardInfo
+ 20385              		.cfi_endproc
+ 20386              	.LFE33:
+ 20388              		.align	1
+ 20389              		.global	main
+ 20390              		.thumb
+ 20391              		.thumb_func
+ 20393              	main:
+ 20394              	.LFB29:
+  21:../src/main.c **** {
+ 20395              		.loc 1 21 0
+ 20396              		.cfi_startproc
+ 20397              		@ args = 0, pretend = 0, frame = 1192
+ 20398              		@ frame_needed = 0, uses_anonymous_args = 0
+ 20399 012c 10B5     		push	{r4, lr}
+ 20400              	.LCFI4:
+ 20401              		.cfi_def_cfa_offset 8
+  22:../src/main.c **** 	char path[50]={""};
+ 20402              		.loc 1 22 0
+ 20403 012e 0024     		movs	r4, #0
+ 20404              		.cfi_offset 14, -4
+ 20405              		.cfi_offset 4, -8
+  21:../src/main.c **** {
+ 20406              		.loc 1 21 0
+ 20407 0130 ADF5956D 		sub	sp, sp, #1192
+ 20408              	.LCFI5:
+ 20409              		.cfi_def_cfa_offset 1200
+  22:../src/main.c **** 	char path[50]={""};
+ 20410              		.loc 1 22 0
+ 20411 0134 2E22     		movs	r2, #46
+ 20412 0136 2146     		mov	r1, r4
+ 20413 0138 0DF58B60 		add	r0, sp, #1112
+ 20414 013c CDF85444 		str	r4, [sp, #1108]
+ 20415 0140 FFF7FEFF 		bl	memset
+  33:../src/main.c **** 	clkInit();
+ 20416              		.loc 1 33 0
+ 20417 0144 FFF7FEFF 		bl	clkInit
+  34:../src/main.c **** 	pinSetup();
+ 20418              		.loc 1 34 0
+ 20419 0148 FFF7FEFF 		bl	pinSetup
+  36:../src/main.c **** 	VS1003_GPIO_conf();
+ 20420              		.loc 1 36 0
+ 20421 014c FFF7FEFF 		bl	VS1003_GPIO_conf
+  37:../src/main.c **** 	VS1003_SPI_conf();
+ 20422              		.loc 1 37 0
+ 20423 0150 FFF7FEFF 		bl	VS1003_SPI_conf
+  38:../src/main.c **** 	VS1003_Start();
+ 20424              		.loc 1 38 0
+ 20425 0154 FFF7FEFF 		bl	VS1003_Start
+  40:../src/main.c **** 	SD_Nvic_conf();
+ 20426              		.loc 1 40 0
+ 20427 0158 FFF7FEFF 		bl	SD_Nvic_conf
+  41:../src/main.c **** 	SD_Config();
+ 20428              		.loc 1 41 0
+ 20429 015c FFF7FEFF 		bl	SD_Config
+  44:../src/main.c **** 	disk_initialize(0);
+ 20430              		.loc 1 44 0
+ 20431 0160 2046     		mov	r0, r4
+ 20432 0162 FFF7FEFF 		bl	disk_initialize
+  45:../src/main.c **** 	res = f_mount(0, &fs);
+ 20433              		.loc 1 45 0
+ 20434 0166 6946     		mov	r1, sp
+ 20435 0168 2046     		mov	r0, r4
+ 20436 016a FFF7FEFF 		bl	f_mount
+  46:../src/main.c **** 	res = f_opendir(&dirs, path);
+ 20437              		.loc 1 46 0
+ 20438 016e 0DF58A61 		add	r1, sp, #1104
+ 20439 0172 0431     		adds	r1, r1, #4
+ 20440 0174 0DF59160 		add	r0, sp, #1160
+ 20441 0178 FFF7FEFF 		bl	f_opendir
+  49:../src/main.c **** 	res = f_open(&fsrc, "test.mp3", FA_READ);
+ 20442              		.loc 1 49 0
+ 20443 017c 8CA8     		add	r0, sp, #560
+ 20444 017e 1449     		ldr	r1, .L26
+ 20445 0180 0122     		movs	r2, #1
+ 20446 0182 FFF7FEFF 		bl	f_open
+ 20447              	.L22:
+  56:../src/main.c **** 		if ( State == MP3_Player )
+ 20448              		.loc 1 56 0
+ 20449 0186 134B     		ldr	r3, .L26+4
+ 20450 0188 1B78     		ldrb	r3, [r3, #0]	@ zero_extendqisi2
+ 20451 018a 9BB1     		cbz	r3, .L17
+ 20452 018c 1FE0     		b	.L18
+ 20453              	.L25:
+  60:../src/main.c **** 			SCI_ChipSelect(RESET);
+ 20454              		.loc 1 60 0
+ 20455 018e FFF7FEFF 		bl	SCI_ChipSelect
+  61:../src/main.c **** 			SDI_ChipSelect(SET);
+ 20456              		.loc 1 61 0
+ 20457 0192 0120     		movs	r0, #1
+ 20458 0194 FFF7FEFF 		bl	SDI_ChipSelect
+ 20459              	.LVL0:
+ 20460              	.L24:
+  64:../src/main.c **** 				while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+ 20461              		.loc 1 64 0 discriminator 1
+ 20462 0198 0F48     		ldr	r0, .L26+8
+ 20463 019a 8021     		movs	r1, #128
+ 20464 019c FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 20465 01a0 0028     		cmp	r0, #0
+ 20466 01a2 F9D0     		beq	.L24
+  65:../src/main.c **** 				SPIPutChar(buffer[i]);
+ 20467              		.loc 1 65 0
+ 20468 01a4 0D4B     		ldr	r3, .L26+12
+ 20469 01a6 185D     		ldrb	r0, [r3, r4]	@ zero_extendqisi2
+  62:../src/main.c **** 			for (i=0;i<sizeof(buffer);i++)
+ 20470              		.loc 1 62 0
+ 20471 01a8 0134     		adds	r4, r4, #1
+  65:../src/main.c **** 				SPIPutChar(buffer[i]);
+ 20472              		.loc 1 65 0
+ 20473 01aa FFF7FEFF 		bl	SPIPutChar
+ 20474              	.LVL1:
+  62:../src/main.c **** 			for (i=0;i<sizeof(buffer);i++)
+ 20475              		.loc 1 62 0
+ 20476 01ae B4F5806F 		cmp	r4, #1024
+ 20477 01b2 F1D1     		bne	.L24
+ 20478              	.LVL2:
+ 20479              	.L17:
+  58:../src/main.c **** 			while(f_read(&fsrc, buffer, sizeof(buffer), &br) == 0)
+ 20480              		.loc 1 58 0 discriminator 1
+ 20481 01b4 0DF59463 		add	r3, sp, #1184
+ 20482 01b8 8CA8     		add	r0, sp, #560
+ 20483 01ba 0849     		ldr	r1, .L26+12
+ 20484 01bc 4FF48062 		mov	r2, #1024
+ 20485 01c0 0433     		adds	r3, r3, #4
+ 20486 01c2 FFF7FEFF 		bl	f_read
+ 20487 01c6 0446     		mov	r4, r0
+ 20488 01c8 0028     		cmp	r0, #0
+ 20489 01ca DCD1     		bne	.L22
+ 20490 01cc DFE7     		b	.L25
+ 20491              	.L18:
+ 20492 01ce FEE7     		b	.L18
+ 20493              	.L27:
+ 20494              		.align	2
+ 20495              	.L26:
+ 20496 01d0 00000000 		.word	.LC0
+ 20497 01d4 00000000 		.word	.LANCHOR1
+ 20498 01d8 00100140 		.word	1073811456
+ 20499 01dc 00000000 		.word	buffer
+ 20500              		.cfi_endproc
+ 20501              	.LFE29:
+ 20503              		.align	1
+ 20504              		.global	showBit
+ 20505              		.thumb
+ 20506              		.thumb_func
+ 20508              	showBit:
+ 20509              	.LFB34:
+ 181:../src/main.c **** 	 //   Status = SD_SetDeviceMode(SD_POLLING_MODE);
+ 182:../src/main.c **** 	   // Status = SD_SetDeviceMode(SD_INTERRUPT_MODE);
+ 183:../src/main.c **** 	  }
+ 184:../src/main.c **** }
+ 185:../src/main.c **** 
+ 186:../src/main.c **** //Najmniej znaczacy ma numer 0
+ 187:../src/main.c **** unsigned char showBit(__IO uint16_t Bytes, unsigned char bitNum){
+ 20510              		.loc 1 187 0
+ 20511              		.cfi_startproc
+ 20512              		@ args = 0, pretend = 0, frame = 8
+ 20513              		@ frame_needed = 0, uses_anonymous_args = 0
+ 20514              		@ link register save eliminated.
+ 20515              	.LVL3:
+ 188:../src/main.c **** 	return ((Bytes & (1 << bitNum) )>> bitNum);
+ 20516              		.loc 1 188 0
+ 20517 01e0 0123     		movs	r3, #1
+ 20518 01e2 8B40     		lsls	r3, r3, r1
+ 187:../src/main.c **** unsigned char showBit(__IO uint16_t Bytes, unsigned char bitNum){
+ 20519              		.loc 1 187 0
+ 20520 01e4 82B0     		sub	sp, sp, #8
+ 20521              	.LCFI6:
+ 20522              		.cfi_def_cfa_offset 8
+ 187:../src/main.c **** unsigned char showBit(__IO uint16_t Bytes, unsigned char bitNum){
+ 20523              		.loc 1 187 0
+ 20524 01e6 ADF80600 		strh	r0, [sp, #6]	@ movhi
+ 20525              		.loc 1 188 0
+ 20526 01ea BDF80620 		ldrh	r2, [sp, #6]
+ 20527 01ee 92B2     		uxth	r2, r2
+ 20528 01f0 1340     		ands	r3, r3, r2
+ 20529 01f2 53FA01F1 		asrs	r1, r3, r1
+ 20530              	.LVL4:
+ 189:../src/main.c **** }
+ 20531              		.loc 1 189 0
+ 20532 01f6 C8B2     		uxtb	r0, r1
+ 20533              	.LVL5:
+ 20534 01f8 02B0     		add	sp, sp, #8
+ 20535 01fa 7047     		bx	lr
+ 20536              		.cfi_endproc
+ 20537              	.LFE34:
+ 20539              		.global	Status
+ 20540              		.global	State
+ 20541              		.comm	SDCardInfo,80,4
+ 20542              		.comm	buffer,1024,1
+ 20543              		.section	.rodata.str1.1,"aMS",%progbits,1
+ 20544              	.LC0:
+ 20545 0000 74657374 		.ascii	"test.mp3\000"
+ 20545      2E6D7033 
+ 20545      00
+ 20546              		.data
+ 20547              		.set	.LANCHOR0,. + 0
+ 20550              	Status:
+ 20551 0000 2A       		.byte	42
+ 20552              		.bss
+ 20553              		.set	.LANCHOR1,. + 0
+ 20556              	State:
+ 20557 0000 00       		.space	1
+ 20558              		.text
+ 20559              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20147  .text:00000000 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20152  .text:00000000 clkInit
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20220  .text:00000064 pinSetup
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20271  .text:000000a4 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20276  .text:000000ac $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20281  .text:000000ac SD_Nvic_conf
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20322  .text:000000d4 SD_Config
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20383  .text:00000124 $d
+                            *COM*:00000050 SDCardInfo
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20388  .text:0000012c $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20393  .text:0000012c main
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20496  .text:000001d0 $d
+                            *COM*:00000400 buffer
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20503  .text:000001e0 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20508  .text:000001e0 showBit
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20550  .data:00000000 Status
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20556  .bss:00000000 State
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cceBCiBy.s:20557  .bss:00000000 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+RCC_DeInit
+RCC_HSEConfig
+RCC_GetFlagStatus
+FLASH_PrefetchBufferCmd
+FLASH_SetLatency
+RCC_HCLKConfig
+RCC_PCLK2Config
+RCC_PCLK1Config
+RCC_PLLConfig
+RCC_PLLCmd
+RCC_SYSCLKConfig
+RCC_GetSYSCLKSource
+RCC_APB2PeriphClockCmd
+RCC_APB1PeriphClockCmd
+GPIO_Init
+NVIC_PriorityGroupConfig
+NVIC_Init
+SD_Init
+SD_GetCardInfo
+SD_SelectDeselect
+SD_EnableWideBusOperation
+SD_SetDeviceMode
+memset
+VS1003_GPIO_conf
+VS1003_SPI_conf
+VS1003_Start
+disk_initialize
+f_mount
+f_opendir
+f_open
+SCI_ChipSelect
+SDI_ChipSelect
+GPIO_ReadInputDataBit
+SPIPutChar
+f_read

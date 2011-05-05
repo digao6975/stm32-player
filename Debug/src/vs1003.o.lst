@@ -1,0 +1,1013 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"vs1003.c"
+  23              	.Ltext0:
+  24              		.file 1 "../src/vs1003.c"
+ 19295              		.align	1
+ 19296              		.global	VS1003_GPIO_conf
+ 19297              		.thumb
+ 19298              		.thumb_func
+ 19300              	VS1003_GPIO_conf:
+ 19301              	.LFB29:
+   1:../src/vs1003.c **** /*
+   2:../src/vs1003.c ****  * vs1003.c
+   3:../src/vs1003.c ****  *
+   4:../src/vs1003.c ****  *  Created on: 25-04-2011
+   5:../src/vs1003.c ****  *      Author: Przemek
+   6:../src/vs1003.c ****  */
+   7:../src/vs1003.c **** #include "vs1003.h"
+   8:../src/vs1003.c **** 
+   9:../src/vs1003.c **** void VS1003_GPIO_conf(){
+ 19302              		.loc 1 9 0
+ 19303              		.cfi_startproc
+ 19304              		@ args = 0, pretend = 0, frame = 8
+ 19305              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19306 0000 13B5     		push	{r0, r1, r4, lr}
+ 19307              	.LCFI0:
+ 19308              		.cfi_def_cfa_offset 16
+  10:../src/vs1003.c ****  	GPIO_InitTypeDef GPIO_InitStructure;
+  11:../src/vs1003.c **** 
+  12:../src/vs1003.c ****   	RCC_APB1PeriphClockCmd(RCC_APB1Periph_SPI2,ENABLE);
+ 19309              		.loc 1 12 0
+ 19310 0002 0121     		movs	r1, #1
+ 19311              		.cfi_offset 14, -4
+ 19312              		.cfi_offset 4, -8
+ 19313              		.cfi_offset 1, -12
+ 19314              		.cfi_offset 0, -16
+ 19315 0004 4FF48040 		mov	r0, #16384
+ 19316 0008 FFF7FEFF 		bl	RCC_APB1PeriphClockCmd
+  13:../src/vs1003.c **** 
+  14:../src/vs1003.c ****   	RCC_APB2PeriphClockCmd(	RCC_APB2Periph_GPIOC | RCC_APB2Periph_GPIOE, ENABLE);
+ 19317              		.loc 1 14 0
+ 19318 000c 5020     		movs	r0, #80
+ 19319 000e 0121     		movs	r1, #1
+ 19320 0010 FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  15:../src/vs1003.c **** 
+  16:../src/vs1003.c ****   	// SPI2 : SCK and MOSI
+  17:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13 | GPIO_Pin_14 | GPIO_Pin_15;
+ 19321              		.loc 1 17 0
+ 19322 0014 4EF20003 		movw	r3, 57344	@ movhi
+ 19323 0018 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  18:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+ 19324              		.loc 1 18 0
+ 19325 001c 0323     		movs	r3, #3
+ 19326 001e 8DF80630 		strb	r3, [sp, #6]
+  19:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+  20:../src/vs1003.c ****   	GPIO_Init(GPIOB, &GPIO_InitStructure);
+ 19327              		.loc 1 20 0
+ 19328 0022 01A9     		add	r1, sp, #4
+  19:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+ 19329              		.loc 1 19 0
+ 19330 0024 1533     		adds	r3, r3, #21
+ 19331              		.loc 1 20 0
+ 19332 0026 1648     		ldr	r0, .L2
+  21:../src/vs1003.c **** 
+  22:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Pin = CS_PIN;
+  23:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+ 19333              		.loc 1 23 0
+ 19334 0028 1024     		movs	r4, #16
+  19:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP;
+ 19335              		.loc 1 19 0
+ 19336 002a 8DF80730 		strb	r3, [sp, #7]
+  20:../src/vs1003.c ****   	GPIO_Init(GPIOB, &GPIO_InitStructure);
+ 19337              		.loc 1 20 0
+ 19338 002e FFF7FEFF 		bl	GPIO_Init
+  22:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Pin = CS_PIN;
+ 19339              		.loc 1 22 0
+ 19340 0032 4FF48053 		mov	r3, #4096	@ movhi
+  24:../src/vs1003.c ****   	GPIO_Init(CS_PORT, &GPIO_InitStructure);
+ 19341              		.loc 1 24 0
+ 19342 0036 01A9     		add	r1, sp, #4
+ 19343 0038 1148     		ldr	r0, .L2
+  22:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Pin = CS_PIN;
+ 19344              		.loc 1 22 0
+ 19345 003a ADF80430 		strh	r3, [sp, #4]	@ movhi
+  23:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+ 19346              		.loc 1 23 0
+ 19347 003e 8DF80740 		strb	r4, [sp, #7]
+ 19348              		.loc 1 24 0
+ 19349 0042 FFF7FEFF 		bl	GPIO_Init
+  25:../src/vs1003.c **** 
+  26:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Pin = DREQ_PIN;
+ 19350              		.loc 1 26 0
+ 19351 0046 8023     		movs	r3, #128
+ 19352 0048 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  27:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+  28:../src/vs1003.c ****   	GPIO_Init(DREQ_PORT, &GPIO_InitStructure);
+ 19353              		.loc 1 28 0
+ 19354 004c 01A9     		add	r1, sp, #4
+  27:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+ 19355              		.loc 1 27 0
+ 19356 004e 2823     		movs	r3, #40
+ 19357              		.loc 1 28 0
+ 19358 0050 0C48     		ldr	r0, .L2+4
+  27:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IPD;
+ 19359              		.loc 1 27 0
+ 19360 0052 8DF80730 		strb	r3, [sp, #7]
+ 19361              		.loc 1 28 0
+ 19362 0056 FFF7FEFF 		bl	GPIO_Init
+  29:../src/vs1003.c **** 
+  30:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Pin = XDCS_PIN;
+ 19363              		.loc 1 30 0
+ 19364 005a 4023     		movs	r3, #64
+  31:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  32:../src/vs1003.c ****   	GPIO_Init(XDCS_PORT, &GPIO_InitStructure);
+ 19365              		.loc 1 32 0
+ 19366 005c 01A9     		add	r1, sp, #4
+ 19367 005e 0948     		ldr	r0, .L2+4
+  30:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Pin = XDCS_PIN;
+ 19368              		.loc 1 30 0
+ 19369 0060 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  31:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+ 19370              		.loc 1 31 0
+ 19371 0064 8DF80740 		strb	r4, [sp, #7]
+ 19372              		.loc 1 32 0
+ 19373 0068 FFF7FEFF 		bl	GPIO_Init
+  33:../src/vs1003.c **** 
+  34:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Pin = XRESET_PIN;
+ 19374              		.loc 1 34 0
+ 19375 006c 0123     		movs	r3, #1
+  35:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+  36:../src/vs1003.c ****   	GPIO_Init(XRESET_PORT, &GPIO_InitStructure);
+ 19376              		.loc 1 36 0
+ 19377 006e 0648     		ldr	r0, .L2+8
+ 19378 0070 01A9     		add	r1, sp, #4
+  34:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Pin = XRESET_PIN;
+ 19379              		.loc 1 34 0
+ 19380 0072 ADF80430 		strh	r3, [sp, #4]	@ movhi
+  35:../src/vs1003.c ****   	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+ 19381              		.loc 1 35 0
+ 19382 0076 8DF80740 		strb	r4, [sp, #7]
+ 19383              		.loc 1 36 0
+ 19384 007a FFF7FEFF 		bl	GPIO_Init
+  37:../src/vs1003.c **** 
+  38:../src/vs1003.c **** }
+ 19385              		.loc 1 38 0
+ 19386 007e 1CBD     		pop	{r2, r3, r4, pc}
+ 19387              	.L3:
+ 19388              		.align	2
+ 19389              	.L2:
+ 19390 0080 000C0140 		.word	1073810432
+ 19391 0084 00100140 		.word	1073811456
+ 19392 0088 00180140 		.word	1073813504
+ 19393              		.cfi_endproc
+ 19394              	.LFE29:
+ 19396              		.align	1
+ 19397              		.global	VS1003_SPI_conf
+ 19398              		.thumb
+ 19399              		.thumb_func
+ 19401              	VS1003_SPI_conf:
+ 19402              	.LFB30:
+  39:../src/vs1003.c **** 
+  40:../src/vs1003.c **** void VS1003_SPI_conf(){
+ 19403              		.loc 1 40 0
+ 19404              		.cfi_startproc
+ 19405              		@ args = 0, pretend = 0, frame = 24
+ 19406              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19407 008c 7FB5     		push	{r0, r1, r2, r3, r4, r5, r6, lr}
+ 19408              	.LCFI1:
+ 19409              		.cfi_def_cfa_offset 32
+  41:../src/vs1003.c **** 	SPI_InitTypeDef   SPI_InitStructure;
+  42:../src/vs1003.c **** 
+  43:../src/vs1003.c **** 	// Konfiguracja SPI2
+  44:../src/vs1003.c ****   	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+  45:../src/vs1003.c ****   	SPI_InitStructure.SPI_Mode = SPI_Mode_Master;
+ 19410              		.loc 1 45 0
+ 19411 008e 4FF48272 		mov	r2, #260	@ movhi
+ 19412              		.cfi_offset 14, -4
+ 19413              		.cfi_offset 6, -8
+ 19414              		.cfi_offset 5, -12
+ 19415              		.cfi_offset 4, -16
+ 19416              		.cfi_offset 3, -20
+ 19417              		.cfi_offset 2, -24
+ 19418              		.cfi_offset 1, -28
+ 19419              		.cfi_offset 0, -32
+  44:../src/vs1003.c ****   	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+ 19420              		.loc 1 44 0
+ 19421 0092 0023     		movs	r3, #0
+ 19422              		.loc 1 45 0
+ 19423 0094 ADF80620 		strh	r2, [sp, #6]	@ movhi
+  46:../src/vs1003.c ****   	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+  47:../src/vs1003.c **** 
+  48:../src/vs1003.c ****   	// Narazie dla wyslania (SI rising edge)
+  49:../src/vs1003.c ****   	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
+  50:../src/vs1003.c ****   	SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+  51:../src/vs1003.c **** 
+  52:../src/vs1003.c **** 
+  53:../src/vs1003.c ****   	SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
+ 19424              		.loc 1 53 0
+ 19425 0098 4FF40072 		mov	r2, #512	@ movhi
+  44:../src/vs1003.c ****   	SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex;
+ 19426              		.loc 1 44 0
+ 19427 009c ADF80430 		strh	r3, [sp, #4]	@ movhi
+  46:../src/vs1003.c ****   	SPI_InitStructure.SPI_DataSize = SPI_DataSize_8b;
+ 19428              		.loc 1 46 0
+ 19429 00a0 ADF80830 		strh	r3, [sp, #8]	@ movhi
+  49:../src/vs1003.c ****   	SPI_InitStructure.SPI_CPOL = SPI_CPOL_Low;
+ 19430              		.loc 1 49 0
+ 19431 00a4 ADF80A30 		strh	r3, [sp, #10]	@ movhi
+  50:../src/vs1003.c ****   	SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
+ 19432              		.loc 1 50 0
+ 19433 00a8 ADF80C30 		strh	r3, [sp, #12]	@ movhi
+ 19434              		.loc 1 53 0
+ 19435 00ac ADF80E20 		strh	r2, [sp, #14]	@ movhi
+  54:../src/vs1003.c **** 
+  55:../src/vs1003.c ****   	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
+  56:../src/vs1003.c ****   	SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
+ 19436              		.loc 1 56 0
+ 19437 00b0 ADF81230 		strh	r3, [sp, #18]	@ movhi
+  55:../src/vs1003.c ****   	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
+ 19438              		.loc 1 55 0
+ 19439 00b4 2022     		movs	r2, #32
+  57:../src/vs1003.c ****   	SPI_InitStructure.SPI_CRCPolynomial = 7;
+ 19440              		.loc 1 57 0
+ 19441 00b6 0723     		movs	r3, #7
+  58:../src/vs1003.c ****   	SPI_Init(SPI2, &SPI_InitStructure);
+ 19442              		.loc 1 58 0
+ 19443 00b8 01A9     		add	r1, sp, #4
+ 19444 00ba 0648     		ldr	r0, .L5
+  55:../src/vs1003.c ****   	SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_32;
+ 19445              		.loc 1 55 0
+ 19446 00bc ADF81020 		strh	r2, [sp, #16]	@ movhi
+  57:../src/vs1003.c ****   	SPI_InitStructure.SPI_CRCPolynomial = 7;
+ 19447              		.loc 1 57 0
+ 19448 00c0 ADF81430 		strh	r3, [sp, #20]	@ movhi
+ 19449              		.loc 1 58 0
+ 19450 00c4 FFF7FEFF 		bl	SPI_Init
+  59:../src/vs1003.c **** 
+  60:../src/vs1003.c ****   	// Wlacz NSS
+  61:../src/vs1003.c ****   	//SPI_SSOutputCmd(SPI2, ENABLE);
+  62:../src/vs1003.c **** 
+  63:../src/vs1003.c ****   	// Wlacz SPI2
+  64:../src/vs1003.c ****   	SPI_Cmd(SPI2, ENABLE);
+ 19451              		.loc 1 64 0
+ 19452 00c8 0248     		ldr	r0, .L5
+ 19453 00ca 0121     		movs	r1, #1
+ 19454 00cc FFF7FEFF 		bl	SPI_Cmd
+  65:../src/vs1003.c **** }
+ 19455              		.loc 1 65 0
+ 19456 00d0 07B0     		add	sp, sp, #28
+ 19457 00d2 00BD     		pop	{pc}
+ 19458              	.L6:
+ 19459              		.align	2
+ 19460              	.L5:
+ 19461 00d4 00380040 		.word	1073756160
+ 19462              		.cfi_endproc
+ 19463              	.LFE30:
+ 19465              		.align	1
+ 19466              		.global	SPIPutChar
+ 19467              		.thumb
+ 19468              		.thumb_func
+ 19470              	SPIPutChar:
+ 19471              	.LFB31:
+  66:../src/vs1003.c **** 
+  67:../src/vs1003.c **** uint8_t SPIPutChar(uint8_t outB){
+ 19472              		.loc 1 67 0
+ 19473              		.cfi_startproc
+ 19474              		@ args = 0, pretend = 0, frame = 0
+ 19475              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19476              	.LVL0:
+ 19477 00d8 08B5     		push	{r3, lr}
+ 19478              	.LCFI2:
+ 19479              		.cfi_def_cfa_offset 8
+ 19480              	.L8:
+  68:../src/vs1003.c **** 	  /* Wait if TXE cleared, Tx FIFO is full. */
+  69:../src/vs1003.c **** 	   while ((SPI2->SR & TXE) == 0);
+ 19481              		.loc 1 69 0 discriminator 1
+ 19482 00da 074B     		ldr	r3, .L10
+ 19483              		.cfi_offset 14, -4
+ 19484              		.cfi_offset 3, -8
+ 19485 00dc 1A89     		ldrh	r2, [r3, #8]
+ 19486 00de 12F0020F 		tst	r2, #2
+ 19487 00e2 FAD0     		beq	.L8
+  70:../src/vs1003.c **** 	   SPI2->DR = outB;
+ 19488              		.loc 1 70 0
+ 19489 00e4 9881     		strh	r0, [r3, #12]	@ movhi
+ 19490              	.LVL1:
+ 19491              	.L9:
+  71:../src/vs1003.c **** 	   /* Wait if RNE cleared, Rx FIFO is empty. */
+  72:../src/vs1003.c **** 	   while ((SPI2->SR & RXNE) == 0);
+ 19492              		.loc 1 72 0 discriminator 1
+ 19493 00e6 0448     		ldr	r0, .L10
+ 19494 00e8 0389     		ldrh	r3, [r0, #8]
+ 19495 00ea 13F0010F 		tst	r3, #1
+ 19496 00ee FAD0     		beq	.L9
+  73:../src/vs1003.c **** 	   return SPI_I2S_ReceiveData(SPI2);
+ 19497              		.loc 1 73 0
+ 19498 00f0 FFF7FEFF 		bl	SPI_I2S_ReceiveData
+  74:../src/vs1003.c **** }
+ 19499              		.loc 1 74 0
+ 19500 00f4 C0B2     		uxtb	r0, r0
+ 19501 00f6 08BD     		pop	{r3, pc}
+ 19502              	.L11:
+ 19503              		.align	2
+ 19504              	.L10:
+ 19505 00f8 00380040 		.word	1073756160
+ 19506              		.cfi_endproc
+ 19507              	.LFE31:
+ 19509              		.align	1
+ 19510              		.global	Delay
+ 19511              		.thumb
+ 19512              		.thumb_func
+ 19514              	Delay:
+ 19515              	.LFB32:
+  75:../src/vs1003.c **** 
+  76:../src/vs1003.c **** void Delay(uint32_t nTime)
+  77:../src/vs1003.c **** {
+ 19516              		.loc 1 77 0
+ 19517              		.cfi_startproc
+ 19518              		@ args = 0, pretend = 0, frame = 0
+ 19519              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19520              		@ link register save eliminated.
+ 19521              	.LVL2:
+  78:../src/vs1003.c **** 	unsigned int i;
+  79:../src/vs1003.c **** 	unsigned long j;
+  80:../src/vs1003.c **** 	for(i = nTime;i > 0;i--)
+  81:../src/vs1003.c **** 		for(j = 1000;j > 0;j--);
+  82:../src/vs1003.c **** }
+ 19522              		.loc 1 82 0
+ 19523 00fc 7047     		bx	lr
+ 19524              		.cfi_endproc
+ 19525              	.LFE32:
+ 19527              		.align	1
+ 19528              		.global	ControlReset
+ 19529              		.thumb
+ 19530              		.thumb_func
+ 19532              	ControlReset:
+ 19533              	.LFB33:
+  83:../src/vs1003.c **** 
+  84:../src/vs1003.c **** void ControlReset(uint8_t State){
+ 19534              		.loc 1 84 0
+ 19535              		.cfi_startproc
+ 19536              		@ args = 0, pretend = 0, frame = 0
+ 19537              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19538              		@ link register save eliminated.
+ 19539              	.LVL3:
+  85:../src/vs1003.c **** 	GPIO_WriteBit(XRESET_PORT,XRESET_PIN,!State);
+ 19540              		.loc 1 85 0
+ 19541 00fe D0F10102 		rsbs	r2, r0, #1
+ 19542 0102 0348     		ldr	r0, .L14
+ 19543              	.LVL4:
+ 19544 0104 38BF     		it	cc
+ 19545 0106 0022     		movcc	r2, #0
+ 19546 0108 0121     		movs	r1, #1
+  86:../src/vs1003.c **** }
+ 19547              		.loc 1 86 0
+  85:../src/vs1003.c **** 	GPIO_WriteBit(XRESET_PORT,XRESET_PIN,!State);
+ 19548              		.loc 1 85 0
+ 19549 010a FFF7FEBF 		b	GPIO_WriteBit
+ 19550              	.L15:
+ 19551 010e 00BF     		.align	2
+ 19552              	.L14:
+ 19553 0110 00180140 		.word	1073813504
+ 19554              		.cfi_endproc
+ 19555              	.LFE33:
+ 19557              		.align	1
+ 19558              		.global	SCI_ChipSelect
+ 19559              		.thumb
+ 19560              		.thumb_func
+ 19562              	SCI_ChipSelect:
+ 19563              	.LFB34:
+  87:../src/vs1003.c **** 
+  88:../src/vs1003.c **** void SCI_ChipSelect(uint8_t State){
+ 19564              		.loc 1 88 0
+ 19565              		.cfi_startproc
+ 19566              		@ args = 0, pretend = 0, frame = 0
+ 19567              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19568              		@ link register save eliminated.
+ 19569              	.LVL5:
+  89:../src/vs1003.c **** 	GPIO_WriteBit(CS_PORT,CS_PIN,!State);
+ 19570              		.loc 1 89 0
+ 19571 0114 D0F10102 		rsbs	r2, r0, #1
+ 19572 0118 0348     		ldr	r0, .L17
+ 19573              	.LVL6:
+ 19574 011a 38BF     		it	cc
+ 19575 011c 0022     		movcc	r2, #0
+ 19576 011e 4FF48051 		mov	r1, #4096
+  90:../src/vs1003.c **** }
+ 19577              		.loc 1 90 0
+  89:../src/vs1003.c **** 	GPIO_WriteBit(CS_PORT,CS_PIN,!State);
+ 19578              		.loc 1 89 0
+ 19579 0122 FFF7FEBF 		b	GPIO_WriteBit
+ 19580              	.L18:
+ 19581 0126 00BF     		.align	2
+ 19582              	.L17:
+ 19583 0128 000C0140 		.word	1073810432
+ 19584              		.cfi_endproc
+ 19585              	.LFE34:
+ 19587              		.align	1
+ 19588              		.global	SDI_ChipSelect
+ 19589              		.thumb
+ 19590              		.thumb_func
+ 19592              	SDI_ChipSelect:
+ 19593              	.LFB35:
+  91:../src/vs1003.c **** 
+  92:../src/vs1003.c **** void SDI_ChipSelect(uint8_t State){
+ 19594              		.loc 1 92 0
+ 19595              		.cfi_startproc
+ 19596              		@ args = 0, pretend = 0, frame = 0
+ 19597              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19598              		@ link register save eliminated.
+ 19599              	.LVL7:
+  93:../src/vs1003.c **** 	GPIO_WriteBit(XDCS_PORT,XDCS_PIN,!State);
+ 19600              		.loc 1 93 0
+ 19601 012c D0F10102 		rsbs	r2, r0, #1
+ 19602 0130 0248     		ldr	r0, .L20
+ 19603              	.LVL8:
+ 19604 0132 38BF     		it	cc
+ 19605 0134 0022     		movcc	r2, #0
+ 19606 0136 4021     		movs	r1, #64
+  94:../src/vs1003.c **** }
+ 19607              		.loc 1 94 0
+  93:../src/vs1003.c **** 	GPIO_WriteBit(XDCS_PORT,XDCS_PIN,!State);
+ 19608              		.loc 1 93 0
+ 19609 0138 FFF7FEBF 		b	GPIO_WriteBit
+ 19610              	.L21:
+ 19611              		.align	2
+ 19612              	.L20:
+ 19613 013c 00100140 		.word	1073811456
+ 19614              		.cfi_endproc
+ 19615              	.LFE35:
+ 19617              		.align	1
+ 19618              		.global	WriteRegister
+ 19619              		.thumb
+ 19620              		.thumb_func
+ 19622              	WriteRegister:
+ 19623              	.LFB37:
+  95:../src/vs1003.c **** 
+  96:../src/vs1003.c **** void VS1003_SineTest(){
+  97:../src/vs1003.c **** 	ControlReset(SET);
+  98:../src/vs1003.c **** 	ResetChip();
+  99:../src/vs1003.c **** 	Delay(1000);
+ 100:../src/vs1003.c **** 	SPIPutChar(0xff);
+ 101:../src/vs1003.c **** 
+ 102:../src/vs1003.c **** 	SCI_ChipSelect(RESET);
+ 103:../src/vs1003.c **** 	SDI_ChipSelect(RESET);
+ 104:../src/vs1003.c **** 	ControlReset(RESET);
+ 105:../src/vs1003.c **** 
+ 106:../src/vs1003.c **** 	//ResetChip();
+ 107:../src/vs1003.c **** 	Delay(500);
+ 108:../src/vs1003.c **** 
+ 109:../src/vs1003.c **** 	WriteRegister(SPI_MODE,0x08,0x20);//进入vs1003的测试模式
+ 110:../src/vs1003.c **** 	Delay(500);
+ 111:../src/vs1003.c **** 
+ 112:../src/vs1003.c **** 	while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+ 113:../src/vs1003.c **** 
+ 114:../src/vs1003.c **** 	SDI_ChipSelect(SET);
+ 115:../src/vs1003.c **** 	SPIPutChar(0x53);
+ 116:../src/vs1003.c **** 	SPIPutChar(0xef);
+ 117:../src/vs1003.c **** 	SPIPutChar(0x6e);
+ 118:../src/vs1003.c **** 	SPIPutChar(0x24);
+ 119:../src/vs1003.c **** 	SPIPutChar(0x00);
+ 120:../src/vs1003.c **** 	SPIPutChar(0x00);
+ 121:../src/vs1003.c **** 	SPIPutChar(0x00);
+ 122:../src/vs1003.c **** 	SPIPutChar(0x00);
+ 123:../src/vs1003.c **** 	Delay(1000);
+ 124:../src/vs1003.c **** 	SDI_ChipSelect(RESET);
+ 125:../src/vs1003.c **** 
+ 126:../src/vs1003.c **** }
+ 127:../src/vs1003.c **** 
+ 128:../src/vs1003.c **** void WriteRegister(uint8_t addressbyte, uint8_t highbyte, uint8_t lowbyte)
+ 129:../src/vs1003.c **** {
+ 19624              		.loc 1 129 0
+ 19625              		.cfi_startproc
+ 19626              		@ args = 0, pretend = 0, frame = 0
+ 19627              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19628              	.LVL9:
+ 19629 0140 70B5     		push	{r4, r5, r6, lr}
+ 19630              	.LCFI3:
+ 19631              		.cfi_def_cfa_offset 16
+ 19632              		.loc 1 129 0
+ 19633 0142 0546     		mov	r5, r0
+ 19634              		.cfi_offset 14, -4
+ 19635              		.cfi_offset 6, -8
+ 19636              		.cfi_offset 5, -12
+ 19637              		.cfi_offset 4, -16
+ 130:../src/vs1003.c **** 	SDI_ChipSelect(RESET);
+ 19638              		.loc 1 130 0
+ 19639 0144 0020     		movs	r0, #0
+ 19640              	.LVL10:
+ 129:../src/vs1003.c **** {
+ 19641              		.loc 1 129 0
+ 19642 0146 0C46     		mov	r4, r1
+ 19643 0148 1646     		mov	r6, r2
+ 19644              		.loc 1 130 0
+ 19645 014a FFF7FEFF 		bl	SDI_ChipSelect
+ 19646              	.LVL11:
+ 19647              	.L23:
+ 131:../src/vs1003.c **** 	while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+ 19648              		.loc 1 131 0 discriminator 1
+ 19649 014e 0C48     		ldr	r0, .L24
+ 19650 0150 8021     		movs	r1, #128
+ 19651 0152 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 19652 0156 0028     		cmp	r0, #0
+ 19653 0158 F9D0     		beq	.L23
+ 132:../src/vs1003.c **** 	SCI_ChipSelect(SET);
+ 19654              		.loc 1 132 0
+ 19655 015a 0120     		movs	r0, #1
+ 19656 015c FFF7FEFF 		bl	SCI_ChipSelect
+ 133:../src/vs1003.c **** 	SPIPutChar(VS_WRITE_COMMAND);
+ 19657              		.loc 1 133 0
+ 19658 0160 0220     		movs	r0, #2
+ 19659 0162 FFF7FEFF 		bl	SPIPutChar
+ 134:../src/vs1003.c **** 	SPIPutChar(addressbyte);
+ 19660              		.loc 1 134 0
+ 19661 0166 2846     		mov	r0, r5
+ 19662 0168 FFF7FEFF 		bl	SPIPutChar
+ 135:../src/vs1003.c **** 	SPIPutChar(highbyte);
+ 19663              		.loc 1 135 0
+ 19664 016c 2046     		mov	r0, r4
+ 19665 016e FFF7FEFF 		bl	SPIPutChar
+ 136:../src/vs1003.c **** 	SPIPutChar(lowbyte);
+ 19666              		.loc 1 136 0
+ 19667 0172 3046     		mov	r0, r6
+ 19668 0174 FFF7FEFF 		bl	SPIPutChar
+ 137:../src/vs1003.c **** 	SCI_ChipSelect(RESET);
+ 19669              		.loc 1 137 0
+ 19670 0178 0020     		movs	r0, #0
+ 138:../src/vs1003.c **** }
+ 19671              		.loc 1 138 0
+ 19672 017a BDE87040 		pop	{r4, r5, r6, lr}
+ 137:../src/vs1003.c **** 	SCI_ChipSelect(RESET);
+ 19673              		.loc 1 137 0
+ 19674 017e FEE7     		b	SCI_ChipSelect
+ 19675              	.L25:
+ 19676              		.align	2
+ 19677              	.L24:
+ 19678 0180 00100140 		.word	1073811456
+ 19679              		.cfi_endproc
+ 19680              	.LFE37:
+ 19682              		.align	1
+ 19683              		.global	ResetChip
+ 19684              		.thumb
+ 19685              		.thumb_func
+ 19687              	ResetChip:
+ 19688              	.LFB38:
+ 139:../src/vs1003.c **** 
+ 140:../src/vs1003.c **** void ResetChip(){
+ 19689              		.loc 1 140 0
+ 19690              		.cfi_startproc
+ 19691              		@ args = 0, pretend = 0, frame = 0
+ 19692              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19693 0184 08B5     		push	{r3, lr}
+ 19694              	.LCFI4:
+ 19695              		.cfi_def_cfa_offset 8
+ 141:../src/vs1003.c **** 	ControlReset(SET);
+ 19696              		.loc 1 141 0
+ 19697 0186 0120     		movs	r0, #1
+ 19698              		.cfi_offset 14, -4
+ 19699              		.cfi_offset 3, -8
+ 19700 0188 FFF7FEFF 		bl	ControlReset
+ 19701              	.LVL12:
+ 142:../src/vs1003.c **** 	Delay(100);
+ 143:../src/vs1003.c **** 	SPIPutChar(0xff);
+ 19702              		.loc 1 143 0
+ 19703 018c FF20     		movs	r0, #255
+ 19704 018e FFF7FEFF 		bl	SPIPutChar
+ 144:../src/vs1003.c **** 	SCI_ChipSelect(RESET);
+ 19705              		.loc 1 144 0
+ 19706 0192 0020     		movs	r0, #0
+ 19707 0194 FFF7FEFF 		bl	SCI_ChipSelect
+ 145:../src/vs1003.c **** 	SDI_ChipSelect(RESET);
+ 19708              		.loc 1 145 0
+ 19709 0198 0020     		movs	r0, #0
+ 19710 019a FFF7FEFF 		bl	SDI_ChipSelect
+ 146:../src/vs1003.c **** 	ControlReset(RESET);
+ 19711              		.loc 1 146 0
+ 19712 019e 0020     		movs	r0, #0
+ 19713 01a0 FFF7FEFF 		bl	ControlReset
+ 19714              	.LVL13:
+ 19715              	.L27:
+ 147:../src/vs1003.c **** 	Delay(100);
+ 148:../src/vs1003.c **** 
+ 149:../src/vs1003.c **** 	while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+ 19716              		.loc 1 149 0 discriminator 1
+ 19717 01a4 0348     		ldr	r0, .L28
+ 19718 01a6 8021     		movs	r1, #128
+ 19719 01a8 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 19720 01ac 0028     		cmp	r0, #0
+ 19721 01ae F9D0     		beq	.L27
+ 150:../src/vs1003.c **** 	Delay(100);
+ 151:../src/vs1003.c **** }
+ 19722              		.loc 1 151 0
+ 19723 01b0 08BD     		pop	{r3, pc}
+ 19724              	.L29:
+ 19725 01b2 00BF     		.align	2
+ 19726              	.L28:
+ 19727 01b4 00100140 		.word	1073811456
+ 19728              		.cfi_endproc
+ 19729              	.LFE38:
+ 19731              		.align	1
+ 19732              		.global	VS1003_SineTest
+ 19733              		.thumb
+ 19734              		.thumb_func
+ 19736              	VS1003_SineTest:
+ 19737              	.LFB36:
+  96:../src/vs1003.c **** void VS1003_SineTest(){
+ 19738              		.loc 1 96 0
+ 19739              		.cfi_startproc
+ 19740              		@ args = 0, pretend = 0, frame = 0
+ 19741              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19742 01b8 10B5     		push	{r4, lr}
+ 19743              	.LCFI5:
+ 19744              		.cfi_def_cfa_offset 8
+  97:../src/vs1003.c **** 	ControlReset(SET);
+ 19745              		.loc 1 97 0
+ 19746 01ba 0120     		movs	r0, #1
+ 19747              		.cfi_offset 14, -4
+ 19748              		.cfi_offset 4, -8
+ 19749 01bc FFF7FEFF 		bl	ControlReset
+  98:../src/vs1003.c **** 	ResetChip();
+ 19750              		.loc 1 98 0
+ 19751 01c0 FFF7FEFF 		bl	ResetChip
+ 19752              	.LVL14:
+ 100:../src/vs1003.c **** 	SPIPutChar(0xff);
+ 19753              		.loc 1 100 0
+ 19754 01c4 FF20     		movs	r0, #255
+ 19755 01c6 FFF7FEFF 		bl	SPIPutChar
+ 102:../src/vs1003.c **** 	SCI_ChipSelect(RESET);
+ 19756              		.loc 1 102 0
+ 19757 01ca 0020     		movs	r0, #0
+ 19758 01cc FFF7FEFF 		bl	SCI_ChipSelect
+ 103:../src/vs1003.c **** 	SDI_ChipSelect(RESET);
+ 19759              		.loc 1 103 0
+ 19760 01d0 0020     		movs	r0, #0
+ 19761 01d2 FFF7FEFF 		bl	SDI_ChipSelect
+ 104:../src/vs1003.c **** 	ControlReset(RESET);
+ 19762              		.loc 1 104 0
+ 19763 01d6 0020     		movs	r0, #0
+ 19764 01d8 FFF7FEFF 		bl	ControlReset
+ 19765              	.LVL15:
+ 109:../src/vs1003.c **** 	WriteRegister(SPI_MODE,0x08,0x20);//进入vs1003的测试模式
+ 19766              		.loc 1 109 0
+ 19767 01dc 0020     		movs	r0, #0
+ 19768 01de 0821     		movs	r1, #8
+ 19769 01e0 2022     		movs	r2, #32
+ 19770 01e2 FFF7FEFF 		bl	WriteRegister
+ 19771              	.LVL16:
+ 19772              	.L31:
+ 112:../src/vs1003.c **** 	while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+ 19773              		.loc 1 112 0 discriminator 1
+ 19774 01e6 1248     		ldr	r0, .L32
+ 19775 01e8 8021     		movs	r1, #128
+ 19776 01ea FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 19777 01ee 0028     		cmp	r0, #0
+ 19778 01f0 F9D0     		beq	.L31
+ 114:../src/vs1003.c **** 	SDI_ChipSelect(SET);
+ 19779              		.loc 1 114 0
+ 19780 01f2 0120     		movs	r0, #1
+ 19781 01f4 FFF7FEFF 		bl	SDI_ChipSelect
+ 115:../src/vs1003.c **** 	SPIPutChar(0x53);
+ 19782              		.loc 1 115 0
+ 19783 01f8 5320     		movs	r0, #83
+ 19784 01fa FFF7FEFF 		bl	SPIPutChar
+ 116:../src/vs1003.c **** 	SPIPutChar(0xef);
+ 19785              		.loc 1 116 0
+ 19786 01fe EF20     		movs	r0, #239
+ 19787 0200 FFF7FEFF 		bl	SPIPutChar
+ 117:../src/vs1003.c **** 	SPIPutChar(0x6e);
+ 19788              		.loc 1 117 0
+ 19789 0204 6E20     		movs	r0, #110
+ 19790 0206 FFF7FEFF 		bl	SPIPutChar
+ 118:../src/vs1003.c **** 	SPIPutChar(0x24);
+ 19791              		.loc 1 118 0
+ 19792 020a 2420     		movs	r0, #36
+ 19793 020c FFF7FEFF 		bl	SPIPutChar
+ 119:../src/vs1003.c **** 	SPIPutChar(0x00);
+ 19794              		.loc 1 119 0
+ 19795 0210 0020     		movs	r0, #0
+ 19796 0212 FFF7FEFF 		bl	SPIPutChar
+ 120:../src/vs1003.c **** 	SPIPutChar(0x00);
+ 19797              		.loc 1 120 0
+ 19798 0216 0020     		movs	r0, #0
+ 19799 0218 FFF7FEFF 		bl	SPIPutChar
+ 121:../src/vs1003.c **** 	SPIPutChar(0x00);
+ 19800              		.loc 1 121 0
+ 19801 021c 0020     		movs	r0, #0
+ 19802 021e FFF7FEFF 		bl	SPIPutChar
+ 122:../src/vs1003.c **** 	SPIPutChar(0x00);
+ 19803              		.loc 1 122 0
+ 19804 0222 0020     		movs	r0, #0
+ 19805 0224 FFF7FEFF 		bl	SPIPutChar
+ 19806              	.LVL17:
+ 124:../src/vs1003.c **** 	SDI_ChipSelect(RESET);
+ 19807              		.loc 1 124 0
+ 19808 0228 0020     		movs	r0, #0
+ 126:../src/vs1003.c **** }
+ 19809              		.loc 1 126 0
+ 19810 022a BDE81040 		pop	{r4, lr}
+ 124:../src/vs1003.c **** 	SDI_ChipSelect(RESET);
+ 19811              		.loc 1 124 0
+ 19812 022e FEE7     		b	SDI_ChipSelect
+ 19813              	.L33:
+ 19814              		.align	2
+ 19815              	.L32:
+ 19816 0230 00100140 		.word	1073811456
+ 19817              		.cfi_endproc
+ 19818              	.LFE36:
+ 19820              		.align	1
+ 19821              		.global	VS1003_Start
+ 19822              		.thumb
+ 19823              		.thumb_func
+ 19825              	VS1003_Start:
+ 19826              	.LFB39:
+ 152:../src/vs1003.c **** 
+ 153:../src/vs1003.c **** void VS1003_Start(){
+ 19827              		.loc 1 153 0
+ 19828              		.cfi_startproc
+ 19829              		@ args = 0, pretend = 0, frame = 0
+ 19830              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19831 0234 08B5     		push	{r3, lr}
+ 19832              	.LCFI6:
+ 19833              		.cfi_def_cfa_offset 8
+ 154:../src/vs1003.c **** 	ControlReset(SET);
+ 19834              		.loc 1 154 0
+ 19835 0236 0120     		movs	r0, #1
+ 19836              		.cfi_offset 14, -4
+ 19837              		.cfi_offset 3, -8
+ 19838 0238 FFF7FEFF 		bl	ControlReset
+ 19839              	.LVL18:
+ 155:../src/vs1003.c **** 	Delay(1000);
+ 156:../src/vs1003.c **** 	SPIPutChar(0xFF);
+ 19840              		.loc 1 156 0
+ 19841 023c FF20     		movs	r0, #255
+ 19842 023e FFF7FEFF 		bl	SPIPutChar
+ 157:../src/vs1003.c **** 	SCI_ChipSelect(RESET);
+ 19843              		.loc 1 157 0
+ 19844 0242 0020     		movs	r0, #0
+ 19845 0244 FFF7FEFF 		bl	SCI_ChipSelect
+ 158:../src/vs1003.c **** 	SDI_ChipSelect(RESET);
+ 19846              		.loc 1 158 0
+ 19847 0248 0020     		movs	r0, #0
+ 19848 024a FFF7FEFF 		bl	SDI_ChipSelect
+ 159:../src/vs1003.c **** 	ControlReset(RESET);
+ 19849              		.loc 1 159 0
+ 19850 024e 0020     		movs	r0, #0
+ 19851 0250 FFF7FEFF 		bl	ControlReset
+ 19852              	.LVL19:
+ 19853              	.L35:
+ 160:../src/vs1003.c **** 	Delay(1000);
+ 161:../src/vs1003.c **** 
+ 162:../src/vs1003.c **** 	while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+ 19854              		.loc 1 162 0 discriminator 1
+ 19855 0254 1548     		ldr	r0, .L37
+ 19856 0256 8021     		movs	r1, #128
+ 19857 0258 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 19858 025c 0028     		cmp	r0, #0
+ 19859 025e F9D0     		beq	.L35
+ 163:../src/vs1003.c **** 
+ 164:../src/vs1003.c **** 	WriteRegister(SPI_MODE,0x08,0x00);
+ 19860              		.loc 1 164 0
+ 19861 0260 0020     		movs	r0, #0
+ 19862 0262 0246     		mov	r2, r0
+ 19863 0264 0821     		movs	r1, #8
+ 19864 0266 FFF7FEFF 		bl	WriteRegister
+ 165:../src/vs1003.c **** 	WriteRegister(SPI_CLOCKF,0x98,0x00);
+ 19865              		.loc 1 165 0
+ 19866 026a 0320     		movs	r0, #3
+ 19867 026c 9821     		movs	r1, #152
+ 19868 026e 0022     		movs	r2, #0
+ 19869 0270 FFF7FEFF 		bl	WriteRegister
+ 166:../src/vs1003.c **** 	WriteRegister(SPI_AUDATA,0xAC,0x45);
+ 19870              		.loc 1 166 0
+ 19871 0274 0520     		movs	r0, #5
+ 19872 0276 AC21     		movs	r1, #172
+ 19873 0278 4522     		movs	r2, #69
+ 19874 027a FFF7FEFF 		bl	WriteRegister
+ 167:../src/vs1003.c **** 	WriteRegister(SPI_BASS,0x08,0x00);
+ 19875              		.loc 1 167 0
+ 19876 027e 0220     		movs	r0, #2
+ 19877 0280 0821     		movs	r1, #8
+ 19878 0282 0022     		movs	r2, #0
+ 19879 0284 FFF7FEFF 		bl	WriteRegister
+ 168:../src/vs1003.c **** 	WriteRegister(SPI_VOL,0x0F,0x0F);
+ 19880              		.loc 1 168 0
+ 19881 0288 0F21     		movs	r1, #15
+ 19882 028a 0A46     		mov	r2, r1
+ 19883 028c 0B20     		movs	r0, #11
+ 19884 028e FFF7FEFF 		bl	WriteRegister
+ 169:../src/vs1003.c **** 	WriteRegister(0x0b,0x00,0x00);
+ 19885              		.loc 1 169 0
+ 19886 0292 0021     		movs	r1, #0
+ 19887 0294 0B20     		movs	r0, #11
+ 19888 0296 0A46     		mov	r2, r1
+ 19889 0298 FFF7FEFF 		bl	WriteRegister
+ 19890              	.L36:
+ 170:../src/vs1003.c **** 
+ 171:../src/vs1003.c **** 	while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+ 19891              		.loc 1 171 0 discriminator 1
+ 19892 029c 0348     		ldr	r0, .L37
+ 19893 029e 8021     		movs	r1, #128
+ 19894 02a0 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 19895 02a4 0028     		cmp	r0, #0
+ 19896 02a6 F9D0     		beq	.L36
+ 172:../src/vs1003.c **** }
+ 19897              		.loc 1 172 0
+ 19898 02a8 08BD     		pop	{r3, pc}
+ 19899              	.L38:
+ 19900 02aa 00BF     		.align	2
+ 19901              	.L37:
+ 19902 02ac 00100140 		.word	1073811456
+ 19903              		.cfi_endproc
+ 19904              	.LFE39:
+ 19906              		.align	1
+ 19907              		.global	VS1003_SendMusicBytes
+ 19908              		.thumb
+ 19909              		.thumb_func
+ 19911              	VS1003_SendMusicBytes:
+ 19912              	.LFB40:
+ 173:../src/vs1003.c **** 
+ 174:../src/vs1003.c **** void VS1003_SendMusicBytes(uint8_t* music,int quantity){
+ 19913              		.loc 1 174 0
+ 19914              		.cfi_startproc
+ 19915              		@ args = 0, pretend = 0, frame = 0
+ 19916              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19917              	.LVL20:
+ 175:../src/vs1003.c **** 	int i,j,k,m;
+ 176:../src/vs1003.c **** 
+ 177:../src/vs1003.c **** 	j = quantity / 32;
+ 19918              		.loc 1 177 0
+ 19919 02b0 0029     		cmp	r1, #0
+ 174:../src/vs1003.c **** void VS1003_SendMusicBytes(uint8_t* music,int quantity){
+ 19920              		.loc 1 174 0
+ 19921 02b2 2DE9F047 		push	{r4, r5, r6, r7, r8, r9, sl, lr}
+ 19922              	.LCFI7:
+ 19923              		.cfi_def_cfa_offset 32
+ 19924              		.loc 1 177 0
+ 19925 02b6 8846     		mov	r8, r1
+ 19926              		.cfi_offset 14, -4
+ 19927              		.cfi_offset 10, -8
+ 19928              		.cfi_offset 9, -12
+ 19929              		.cfi_offset 8, -16
+ 19930              		.cfi_offset 7, -20
+ 19931              		.cfi_offset 6, -24
+ 19932              		.cfi_offset 5, -28
+ 19933              		.cfi_offset 4, -32
+ 174:../src/vs1003.c **** void VS1003_SendMusicBytes(uint8_t* music,int quantity){
+ 19934              		.loc 1 174 0
+ 19935 02b8 0746     		mov	r7, r0
+ 19936              		.loc 1 177 0
+ 19937 02ba B8BF     		it	lt
+ 19938 02bc 01F11F08 		addlt	r8, r1, #31
+ 178:../src/vs1003.c **** 	m = 0;
+ 179:../src/vs1003.c **** 
+ 180:../src/vs1003.c **** 	SDI_ChipSelect(SET);
+ 19939              		.loc 1 180 0
+ 19940 02c0 0120     		movs	r0, #1
+ 19941              	.LVL21:
+ 178:../src/vs1003.c **** 	m = 0;
+ 19942              		.loc 1 178 0
+ 19943 02c2 0024     		movs	r4, #0
+ 174:../src/vs1003.c **** void VS1003_SendMusicBytes(uint8_t* music,int quantity){
+ 19944              		.loc 1 174 0
+ 19945 02c4 0D46     		mov	r5, r1
+ 177:../src/vs1003.c **** 	j = quantity / 32;
+ 19946              		.loc 1 177 0
+ 19947 02c6 4FEA6818 		asr	r8, r8, #5
+ 19948              	.LVL22:
+ 19949              		.loc 1 180 0
+ 19950 02ca FFF7FEFF 		bl	SDI_ChipSelect
+ 19951              	.LVL23:
+ 181:../src/vs1003.c **** 	for ( i = 0; i <= j; i++ )
+ 19952              		.loc 1 181 0
+ 19953 02ce 2646     		mov	r6, r4
+ 19954 02d0 12E0     		b	.L41
+ 19955              	.LVL24:
+ 19956              	.L42:
+ 182:../src/vs1003.c **** 	{
+ 183:../src/vs1003.c **** 		while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+ 19957              		.loc 1 183 0 discriminator 1
+ 19958 02d2 1048     		ldr	r0, .L46
+ 19959 02d4 8021     		movs	r1, #128
+ 19960 02d6 FFF7FEFF 		bl	GPIO_ReadInputDataBit
+ 19961 02da 0028     		cmp	r0, #0
+ 19962 02dc F9D0     		beq	.L42
+ 174:../src/vs1003.c **** void VS1003_SendMusicBytes(uint8_t* music,int quantity){
+ 19963              		.loc 1 174 0
+ 19964 02de 04F1200A 		add	sl, r4, #32
+ 19965 02e2 A146     		mov	r9, r4
+ 19966              	.LVL25:
+ 19967              	.L43:
+ 184:../src/vs1003.c **** 		for (k=0; k < 32; k++)
+ 185:../src/vs1003.c **** 		{
+ 186:../src/vs1003.c **** 		SPIPutChar(music[m]);
+ 19968              		.loc 1 186 0 discriminator 2
+ 19969 02e4 17F80900 		ldrb	r0, [r7, r9]	@ zero_extendqisi2
+ 187:../src/vs1003.c **** 		m++;
+ 19970              		.loc 1 187 0 discriminator 2
+ 19971 02e8 09F10109 		add	r9, r9, #1
+ 19972              	.LVL26:
+ 186:../src/vs1003.c **** 		SPIPutChar(music[m]);
+ 19973              		.loc 1 186 0 discriminator 2
+ 19974 02ec FFF7FEFF 		bl	SPIPutChar
+ 19975              	.LVL27:
+ 184:../src/vs1003.c **** 		for (k=0; k < 32; k++)
+ 19976              		.loc 1 184 0 discriminator 2
+ 19977 02f0 D145     		cmp	r9, sl
+ 19978 02f2 F7D1     		bne	.L43
+ 184:../src/vs1003.c **** 		for (k=0; k < 32; k++)
+ 19979              		.loc 1 184 0 is_stmt 0
+ 19980 02f4 2034     		adds	r4, r4, #32
+ 181:../src/vs1003.c **** 	for ( i = 0; i <= j; i++ )
+ 19981              		.loc 1 181 0 is_stmt 1
+ 19982 02f6 0136     		adds	r6, r6, #1
+ 19983              	.LVL28:
+ 19984              	.L41:
+ 181:../src/vs1003.c **** 	for ( i = 0; i <= j; i++ )
+ 19985              		.loc 1 181 0 is_stmt 0 discriminator 1
+ 19986 02f8 4645     		cmp	r6, r8
+ 19987 02fa EADD     		ble	.L42
+ 19988 02fc 03E0     		b	.L44
+ 19989              	.L45:
+ 188:../src/vs1003.c **** 		}
+ 189:../src/vs1003.c **** 	}
+ 190:../src/vs1003.c **** 	//while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+ 191:../src/vs1003.c **** 	while (m < quantity)
+ 192:../src/vs1003.c **** 	{
+ 193:../src/vs1003.c **** 		SPIPutChar(music[m]);
+ 19990              		.loc 1 193 0 is_stmt 1
+ 19991 02fe 385D     		ldrb	r0, [r7, r4]	@ zero_extendqisi2
+ 19992 0300 FFF7FEFF 		bl	SPIPutChar
+ 194:../src/vs1003.c **** 		m++;
+ 19993              		.loc 1 194 0
+ 19994 0304 0134     		adds	r4, r4, #1
+ 19995              	.LVL29:
+ 19996              	.L44:
+ 191:../src/vs1003.c **** 	while (m < quantity)
+ 19997              		.loc 1 191 0 discriminator 1
+ 19998 0306 AC42     		cmp	r4, r5
+ 19999 0308 F9DB     		blt	.L45
+ 195:../src/vs1003.c **** 	}
+ 196:../src/vs1003.c **** 	SDI_ChipSelect(RESET);
+ 20000              		.loc 1 196 0
+ 20001 030a 0020     		movs	r0, #0
+ 197:../src/vs1003.c **** }
+ 20002              		.loc 1 197 0
+ 20003 030c BDE8F047 		pop	{r4, r5, r6, r7, r8, r9, sl, lr}
+ 196:../src/vs1003.c **** 	SDI_ChipSelect(RESET);
+ 20004              		.loc 1 196 0
+ 20005 0310 FEE7     		b	SDI_ChipSelect
+ 20006              	.L47:
+ 20007 0312 00BF     		.align	2
+ 20008              	.L46:
+ 20009 0314 00100140 		.word	1073811456
+ 20010              		.cfi_endproc
+ 20011              	.LFE40:
+ 20013              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 vs1003.c
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19295  .text:00000000 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19300  .text:00000000 VS1003_GPIO_conf
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19390  .text:00000080 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19396  .text:0000008c $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19401  .text:0000008c VS1003_SPI_conf
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19461  .text:000000d4 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19465  .text:000000d8 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19470  .text:000000d8 SPIPutChar
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19505  .text:000000f8 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19509  .text:000000fc $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19514  .text:000000fc Delay
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19532  .text:000000fe ControlReset
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19553  .text:00000110 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19557  .text:00000114 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19562  .text:00000114 SCI_ChipSelect
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19583  .text:00000128 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19587  .text:0000012c $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19592  .text:0000012c SDI_ChipSelect
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19613  .text:0000013c $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19617  .text:00000140 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19622  .text:00000140 WriteRegister
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19678  .text:00000180 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19682  .text:00000184 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19687  .text:00000184 ResetChip
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19727  .text:000001b4 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19731  .text:000001b8 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19736  .text:000001b8 VS1003_SineTest
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19816  .text:00000230 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19820  .text:00000234 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19825  .text:00000234 VS1003_Start
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19902  .text:000002ac $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19906  .text:000002b0 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:19911  .text:000002b0 VS1003_SendMusicBytes
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\ccAcTc3s.s:20009  .text:00000314 $d
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+RCC_APB1PeriphClockCmd
+RCC_APB2PeriphClockCmd
+GPIO_Init
+SPI_Init
+SPI_Cmd
+SPI_I2S_ReceiveData
+GPIO_WriteBit
+GPIO_ReadInputDataBit
