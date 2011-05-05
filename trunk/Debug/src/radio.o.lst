@@ -1,0 +1,566 @@
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 4
+  11              		.eabi_attribute 18, 4
+  12              		.thumb
+  13              		.file	"radio.c"
+  23              	.Ltext0:
+  24              		.file 1 "../src/radio.c"
+ 19166              		.align	1
+ 19167              		.global	init_i2c
+ 19168              		.thumb
+ 19169              		.thumb_func
+ 19171              	init_i2c:
+ 19172              	.LFB29:
+   1:../src/radio.c **** #include "radio.h"
+   2:../src/radio.c **** 
+   3:../src/radio.c **** static uint8_t out_buf[] = {0XF0,0X2C,0XD0,0X12,0X40};
+   4:../src/radio.c **** 
+   5:../src/radio.c **** void init_i2c(void) {
+ 19173              		.loc 1 5 0
+ 19174              		.cfi_startproc
+ 19175              		@ args = 0, pretend = 0, frame = 24
+ 19176              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19177 0000 7FB5     		push	{r0, r1, r2, r3, r4, r5, r6, lr}
+ 19178              	.LCFI0:
+ 19179              		.cfi_def_cfa_offset 32
+   6:../src/radio.c **** 	I2C_InitTypeDef I2C_InitStruct;
+   7:../src/radio.c **** 	GPIO_InitTypeDef GPIO_InitStruct;
+   8:../src/radio.c **** 
+   9:../src/radio.c **** 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2, ENABLE);
+ 19180              		.loc 1 9 0
+ 19181 0002 0121     		movs	r1, #1
+ 19182              		.cfi_offset 14, -4
+ 19183              		.cfi_offset 6, -8
+ 19184              		.cfi_offset 5, -12
+ 19185              		.cfi_offset 4, -16
+ 19186              		.cfi_offset 3, -20
+ 19187              		.cfi_offset 2, -24
+ 19188              		.cfi_offset 1, -28
+ 19189              		.cfi_offset 0, -32
+ 19190 0004 4FF48000 		mov	r0, #4194304
+ 19191 0008 FFF7FEFF 		bl	RCC_APB1PeriphClockCmd
+  10:../src/radio.c ****  	RCC_APB2PeriphClockCmd(RCC_APB2Periph_AFIO, ENABLE);
+ 19192              		.loc 1 10 0
+ 19193 000c 0120     		movs	r0, #1
+ 19194 000e 0146     		mov	r1, r0
+ 19195 0010 FFF7FEFF 		bl	RCC_APB2PeriphClockCmd
+  11:../src/radio.c **** 
+  12:../src/radio.c **** 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+ 19196              		.loc 1 12 0
+ 19197 0014 0323     		movs	r3, #3
+  13:../src/radio.c **** 
+  14:../src/radio.c **** 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11; // SCL,SDA
+ 19198              		.loc 1 14 0
+ 19199 0016 4FF44062 		mov	r2, #3072	@ movhi
+  12:../src/radio.c **** 	GPIO_InitStruct.GPIO_Speed = GPIO_Speed_50MHz;
+ 19200              		.loc 1 12 0
+ 19201 001a 8DF81630 		strb	r3, [sp, #22]
+  15:../src/radio.c **** 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_OD;
+  16:../src/radio.c **** 	GPIO_Init(GPIOB, &GPIO_InitStruct);
+ 19202              		.loc 1 16 0
+ 19203 001e 05A9     		add	r1, sp, #20
+  15:../src/radio.c **** 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_OD;
+ 19204              		.loc 1 15 0
+ 19205 0020 1933     		adds	r3, r3, #25
+ 19206              		.loc 1 16 0
+ 19207 0022 1A48     		ldr	r0, .L2
+  15:../src/radio.c **** 	GPIO_InitStruct.GPIO_Mode = GPIO_Mode_AF_OD;
+ 19208              		.loc 1 15 0
+ 19209 0024 8DF81730 		strb	r3, [sp, #23]
+  14:../src/radio.c **** 	GPIO_InitStruct.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11; // SCL,SDA
+ 19210              		.loc 1 14 0
+ 19211 0028 ADF81420 		strh	r2, [sp, #20]	@ movhi
+ 19212              		.loc 1 16 0
+ 19213 002c FFF7FEFF 		bl	GPIO_Init
+  17:../src/radio.c **** 
+  18:../src/radio.c **** 	I2C_SoftwareResetCmd(I2C2, ENABLE);
+ 19214              		.loc 1 18 0
+ 19215 0030 0121     		movs	r1, #1
+ 19216 0032 1748     		ldr	r0, .L2+4
+ 19217 0034 FFF7FEFF 		bl	I2C_SoftwareResetCmd
+  19:../src/radio.c **** 	I2C_ITConfig(I2C2,I2C_IT_ERR,ENABLE);
+ 19218              		.loc 1 19 0
+ 19219 0038 0122     		movs	r2, #1
+ 19220 003a 4FF48071 		mov	r1, #256
+ 19221 003e 1448     		ldr	r0, .L2+4
+ 19222 0040 FFF7FEFF 		bl	I2C_ITConfig
+  20:../src/radio.c **** 	I2C_StructInit(&I2C_InitStruct);
+ 19223              		.loc 1 20 0
+ 19224 0044 01A8     		add	r0, sp, #4
+ 19225 0046 FFF7FEFF 		bl	I2C_StructInit
+  21:../src/radio.c **** 	I2C_DeInit(I2C2);
+ 19226              		.loc 1 21 0
+ 19227 004a 1148     		ldr	r0, .L2+4
+ 19228 004c FFF7FEFF 		bl	I2C_DeInit
+  22:../src/radio.c **** 	I2C_InitStruct.I2C_ClockSpeed = 100000;
+ 19229              		.loc 1 22 0
+ 19230 0050 104B     		ldr	r3, .L2+8
+  23:../src/radio.c **** 	I2C_InitStruct.I2C_Ack = I2C_Ack_Enable;
+  24:../src/radio.c **** 	I2C_InitStruct.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+ 19231              		.loc 1 24 0
+ 19232 0052 4FF48042 		mov	r2, #16384	@ movhi
+  22:../src/radio.c **** 	I2C_InitStruct.I2C_ClockSpeed = 100000;
+ 19233              		.loc 1 22 0
+ 19234 0056 0193     		str	r3, [sp, #4]
+  23:../src/radio.c **** 	I2C_InitStruct.I2C_Ack = I2C_Ack_Enable;
+ 19235              		.loc 1 23 0
+ 19236 0058 4FF48063 		mov	r3, #1024	@ movhi
+ 19237 005c ADF80E30 		strh	r3, [sp, #14]	@ movhi
+ 19238              		.loc 1 24 0
+ 19239 0060 ADF81020 		strh	r2, [sp, #16]	@ movhi
+  25:../src/radio.c **** 	I2C_InitStruct.I2C_Mode = I2C_Mode_I2C;
+ 19240              		.loc 1 25 0
+ 19241 0064 0023     		movs	r3, #0
+  26:../src/radio.c **** 	I2C_InitStruct.I2C_DutyCycle = I2C_DutyCycle_2;
+ 19242              		.loc 1 26 0
+ 19243 0066 4BF6FF72 		movw	r2, 49151	@ movhi
+  27:../src/radio.c **** 	I2C_InitStruct.I2C_OwnAddress1 = 0x00;
+  28:../src/radio.c **** 	I2C_Init(I2C2, &I2C_InitStruct);
+ 19244              		.loc 1 28 0
+ 19245 006a 01A9     		add	r1, sp, #4
+ 19246 006c 0848     		ldr	r0, .L2+4
+  25:../src/radio.c **** 	I2C_InitStruct.I2C_Mode = I2C_Mode_I2C;
+ 19247              		.loc 1 25 0
+ 19248 006e ADF80830 		strh	r3, [sp, #8]	@ movhi
+  26:../src/radio.c **** 	I2C_InitStruct.I2C_DutyCycle = I2C_DutyCycle_2;
+ 19249              		.loc 1 26 0
+ 19250 0072 ADF80A20 		strh	r2, [sp, #10]	@ movhi
+  27:../src/radio.c **** 	I2C_InitStruct.I2C_OwnAddress1 = 0x00;
+ 19251              		.loc 1 27 0
+ 19252 0076 ADF80C30 		strh	r3, [sp, #12]	@ movhi
+ 19253              		.loc 1 28 0
+ 19254 007a FFF7FEFF 		bl	I2C_Init
+  29:../src/radio.c **** 	I2C_Cmd(I2C2, ENABLE);
+ 19255              		.loc 1 29 0
+ 19256 007e 0448     		ldr	r0, .L2+4
+ 19257 0080 0121     		movs	r1, #1
+ 19258 0082 FFF7FEFF 		bl	I2C_Cmd
+  30:../src/radio.c **** }
+ 19259              		.loc 1 30 0
+ 19260 0086 07B0     		add	sp, sp, #28
+ 19261 0088 00BD     		pop	{pc}
+ 19262              	.L3:
+ 19263 008a 00BF     		.align	2
+ 19264              	.L2:
+ 19265 008c 000C0140 		.word	1073810432
+ 19266 0090 00580040 		.word	1073764352
+ 19267 0094 A0860100 		.word	100000
+ 19268              		.cfi_endproc
+ 19269              	.LFE29:
+ 19271              		.align	1
+ 19272              		.global	init_NVIC_out
+ 19273              		.thumb
+ 19274              		.thumb_func
+ 19276              	init_NVIC_out:
+ 19277              	.LFB30:
+  31:../src/radio.c **** 
+  32:../src/radio.c **** void init_NVIC_out() {
+ 19278              		.loc 1 32 0
+ 19279              		.cfi_startproc
+ 19280              		@ args = 0, pretend = 0, frame = 8
+ 19281              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19282 0098 07B5     		push	{r0, r1, r2, lr}
+ 19283              	.LCFI1:
+ 19284              		.cfi_def_cfa_offset 16
+  33:../src/radio.c **** 	NVIC_InitTypeDef NVIC_InitStructure;
+  34:../src/radio.c **** 
+  35:../src/radio.c **** 	NVIC_SetVectorTable(NVIC_VectTab_FLASH, 0x0);
+ 19285              		.loc 1 35 0
+ 19286 009a 4FF00060 		mov	r0, #134217728
+ 19287              		.cfi_offset 14, -4
+ 19288              		.cfi_offset 2, -8
+ 19289              		.cfi_offset 1, -12
+ 19290              		.cfi_offset 0, -16
+ 19291 009e 0021     		movs	r1, #0
+ 19292 00a0 FFF7FEFF 		bl	NVIC_SetVectorTable
+  36:../src/radio.c **** 
+  37:../src/radio.c **** 	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0;
+ 19293              		.loc 1 37 0
+ 19294 00a4 0023     		movs	r3, #0
+ 19295 00a6 8DF80530 		strb	r3, [sp, #5]
+  38:../src/radio.c **** 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;
+ 19296              		.loc 1 38 0
+ 19297 00aa 8DF80630 		strb	r3, [sp, #6]
+  39:../src/radio.c **** 	NVIC_InitStructure.NVIC_IRQChannel = DMA1_Channel4_IRQn;
+ 19298              		.loc 1 39 0
+ 19299 00ae 0E33     		adds	r3, r3, #14
+ 19300 00b0 8DF80430 		strb	r3, [sp, #4]
+  40:../src/radio.c **** 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+  41:../src/radio.c **** 	NVIC_Init ( &NVIC_InitStructure );
+ 19301              		.loc 1 41 0
+ 19302 00b4 01A8     		add	r0, sp, #4
+  40:../src/radio.c **** 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
+ 19303              		.loc 1 40 0
+ 19304 00b6 0D3B     		subs	r3, r3, #13
+ 19305 00b8 8DF80730 		strb	r3, [sp, #7]
+ 19306              		.loc 1 41 0
+ 19307 00bc FFF7FEFF 		bl	NVIC_Init
+  42:../src/radio.c **** }
+ 19308              		.loc 1 42 0
+ 19309 00c0 0EBD     		pop	{r1, r2, r3, pc}
+ 19310              		.cfi_endproc
+ 19311              	.LFE30:
+ 19313              		.align	1
+ 19314              		.global	init_DMA_out
+ 19315              		.thumb
+ 19316              		.thumb_func
+ 19318              	init_DMA_out:
+ 19319              	.LFB31:
+  43:../src/radio.c **** 
+  44:../src/radio.c **** void init_DMA_out() {
+ 19320              		.loc 1 44 0
+ 19321              		.cfi_startproc
+ 19322              		@ args = 0, pretend = 0, frame = 48
+ 19323              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19324 00c2 00B5     		push	{lr}
+ 19325              	.LCFI2:
+ 19326              		.cfi_def_cfa_offset 4
+  45:../src/radio.c **** 	DMA_InitTypeDef DMA_InitStruct;
+  46:../src/radio.c **** 
+  47:../src/radio.c **** 	RCC_AHBPeriphClockCmd( RCC_AHBPeriph_DMA1, ENABLE );
+ 19327              		.loc 1 47 0
+ 19328 00c4 0120     		movs	r0, #1
+  44:../src/radio.c **** void init_DMA_out() {
+ 19329              		.loc 1 44 0
+ 19330 00c6 8DB0     		sub	sp, sp, #52
+ 19331              	.LCFI3:
+ 19332              		.cfi_def_cfa_offset 56
+ 19333              		.loc 1 47 0
+ 19334 00c8 0146     		mov	r1, r0
+ 19335              		.cfi_offset 14, -4
+ 19336 00ca FFF7FEFF 		bl	RCC_AHBPeriphClockCmd
+  48:../src/radio.c **** 
+  49:../src/radio.c **** 	//Inicjalizuje kanal 4 do zapisu danych
+  50:../src/radio.c **** 	DMA_DeInit(DMA1_Channel4);
+ 19337              		.loc 1 50 0
+ 19338 00ce 1048     		ldr	r0, .L6
+ 19339 00d0 FFF7FEFF 		bl	DMA_DeInit
+  51:../src/radio.c **** 	DMA_StructInit( &DMA_InitStruct );
+ 19340              		.loc 1 51 0
+ 19341 00d4 01A8     		add	r0, sp, #4
+ 19342 00d6 FFF7FEFF 		bl	DMA_StructInit
+  52:../src/radio.c **** 	DMA_InitStruct.DMA_PeripheralBaseAddr = (unsigned int)&(I2C2 -> DR);
+ 19343              		.loc 1 52 0
+ 19344 00da 0E4B     		ldr	r3, .L6+4
+  53:../src/radio.c **** 	DMA_InitStruct.DMA_BufferSize = 4;
+  54:../src/radio.c **** 	DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralDST;
+  55:../src/radio.c **** 	DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+  56:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+  57:../src/radio.c **** 	DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+  58:../src/radio.c **** 	DMA_InitStruct.DMA_M2M = DMA_M2M_Disable;
+  59:../src/radio.c **** 	DMA_InitStruct.DMA_Mode = DMA_Mode_Normal;
+  60:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  61:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryBaseAddr = (int)&(out_buf[1]);
+  62:../src/radio.c **** 	DMA_InitStruct.DMA_Priority = DMA_Priority_High;
+  63:../src/radio.c **** 	DMA_Init(DMA1_Channel4, &DMA_InitStruct);
+ 19345              		.loc 1 63 0
+ 19346 00dc 0C48     		ldr	r0, .L6
+  52:../src/radio.c **** 	DMA_InitStruct.DMA_PeripheralBaseAddr = (unsigned int)&(I2C2 -> DR);
+ 19347              		.loc 1 52 0
+ 19348 00de 0193     		str	r3, [sp, #4]
+  53:../src/radio.c **** 	DMA_InitStruct.DMA_BufferSize = 4;
+ 19349              		.loc 1 53 0
+ 19350 00e0 0423     		movs	r3, #4
+ 19351 00e2 0493     		str	r3, [sp, #16]
+  54:../src/radio.c **** 	DMA_InitStruct.DMA_DIR = DMA_DIR_PeripheralDST;
+ 19352              		.loc 1 54 0
+ 19353 00e4 0C33     		adds	r3, r3, #12
+ 19354 00e6 0393     		str	r3, [sp, #12]
+  55:../src/radio.c **** 	DMA_InitStruct.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
+ 19355              		.loc 1 55 0
+ 19356 00e8 F033     		adds	r3, r3, #240
+ 19357 00ea 0793     		str	r3, [sp, #28]
+  56:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryDataSize = DMA_MemoryDataSize_Byte;
+ 19358              		.loc 1 56 0
+ 19359 00ec 0023     		movs	r3, #0
+ 19360 00ee 0893     		str	r3, [sp, #32]
+  57:../src/radio.c **** 	DMA_InitStruct.DMA_PeripheralInc = DMA_PeripheralInc_Disable;
+ 19361              		.loc 1 57 0
+ 19362 00f0 0593     		str	r3, [sp, #20]
+  58:../src/radio.c **** 	DMA_InitStruct.DMA_M2M = DMA_M2M_Disable;
+ 19363              		.loc 1 58 0
+ 19364 00f2 0B93     		str	r3, [sp, #44]
+  59:../src/radio.c **** 	DMA_InitStruct.DMA_Mode = DMA_Mode_Normal;
+ 19365              		.loc 1 59 0
+ 19366 00f4 0993     		str	r3, [sp, #36]
+  60:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
+ 19367              		.loc 1 60 0
+ 19368 00f6 8033     		adds	r3, r3, #128
+ 19369 00f8 0693     		str	r3, [sp, #24]
+  61:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryBaseAddr = (int)&(out_buf[1]);
+ 19370              		.loc 1 61 0
+ 19371 00fa 074B     		ldr	r3, .L6+8
+ 19372              		.loc 1 63 0
+ 19373 00fc 01A9     		add	r1, sp, #4
+  61:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryBaseAddr = (int)&(out_buf[1]);
+ 19374              		.loc 1 61 0
+ 19375 00fe 0293     		str	r3, [sp, #8]
+  62:../src/radio.c **** 	DMA_InitStruct.DMA_Priority = DMA_Priority_High;
+ 19376              		.loc 1 62 0
+ 19377 0100 4FF40053 		mov	r3, #8192
+ 19378 0104 0A93     		str	r3, [sp, #40]
+ 19379              		.loc 1 63 0
+ 19380 0106 FFF7FEFF 		bl	DMA_Init
+  64:../src/radio.c **** }
+ 19381              		.loc 1 64 0
+ 19382 010a 0DB0     		add	sp, sp, #52
+ 19383 010c 00BD     		pop	{pc}
+ 19384              	.L7:
+ 19385 010e 00BF     		.align	2
+ 19386              	.L6:
+ 19387 0110 44000240 		.word	1073872964
+ 19388 0114 10580040 		.word	1073764368
+ 19389 0118 01000000 		.word	.LANCHOR0+1
+ 19390              		.cfi_endproc
+ 19391              	.LFE31:
+ 19393              		.align	1
+ 19394              		.global	init_DMA_in
+ 19395              		.thumb
+ 19396              		.thumb_func
+ 19398              	init_DMA_in:
+ 19399              	.LFB32:
+  65:../src/radio.c **** 
+  66:../src/radio.c **** void init_DMA_in() {
+ 19400              		.loc 1 66 0
+ 19401              		.cfi_startproc
+ 19402              		@ args = 0, pretend = 0, frame = 48
+ 19403              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19404 011c 00B5     		push	{lr}
+ 19405              	.LCFI4:
+ 19406              		.cfi_def_cfa_offset 4
+  67:../src/radio.c **** 	DMA_InitTypeDef DMA_InitStruct;
+  68:../src/radio.c **** 
+  69:../src/radio.c **** 	RCC_AHBPeriphClockCmd( RCC_AHBPeriph_DMA1, ENABLE );
+ 19407              		.loc 1 69 0
+ 19408 011e 0120     		movs	r0, #1
+  66:../src/radio.c **** void init_DMA_in() {
+ 19409              		.loc 1 66 0
+ 19410 0120 8DB0     		sub	sp, sp, #52
+ 19411              	.LCFI5:
+ 19412              		.cfi_def_cfa_offset 56
+ 19413              		.loc 1 69 0
+ 19414 0122 0146     		mov	r1, r0
+ 19415              		.cfi_offset 14, -4
+ 19416 0124 FFF7FEFF 		bl	RCC_AHBPeriphClockCmd
+  70:../src/radio.c **** 
+  71:../src/radio.c **** 	DMA_DeInit(DMA1_Channel5);
+ 19417              		.loc 1 71 0
+ 19418 0128 0D48     		ldr	r0, .L9
+ 19419 012a FFF7FEFF 		bl	DMA_DeInit
+  72:../src/radio.c **** 	DMA_StructInit( &DMA_InitStruct );
+ 19420              		.loc 1 72 0
+ 19421 012e 01A8     		add	r0, sp, #4
+ 19422 0130 FFF7FEFF 		bl	DMA_StructInit
+  73:../src/radio.c **** 	DMA_InitStruct.DMA_PeripheralBaseAddr = (unsigned int)&(I2C2 -> DR);
+ 19423              		.loc 1 73 0
+ 19424 0134 0B4B     		ldr	r3, .L9+4
+  74:../src/radio.c **** 	DMA_InitStruct.DMA_BufferSize = 4;
+  75:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
+  76:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryBaseAddr = (int)out_buf;
+  77:../src/radio.c **** 	DMA_InitStruct.DMA_Priority = DMA_Priority_VeryHigh;
+  78:../src/radio.c **** 	DMA_Init(DMA1_Channel5, &DMA_InitStruct);
+ 19425              		.loc 1 78 0
+ 19426 0136 01A9     		add	r1, sp, #4
+  73:../src/radio.c **** 	DMA_InitStruct.DMA_PeripheralBaseAddr = (unsigned int)&(I2C2 -> DR);
+ 19427              		.loc 1 73 0
+ 19428 0138 0193     		str	r3, [sp, #4]
+  74:../src/radio.c **** 	DMA_InitStruct.DMA_BufferSize = 4;
+ 19429              		.loc 1 74 0
+ 19430 013a 0423     		movs	r3, #4
+ 19431 013c 0493     		str	r3, [sp, #16]
+  75:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryInc = DMA_MemoryInc_Enable;
+ 19432              		.loc 1 75 0
+ 19433 013e 7C33     		adds	r3, r3, #124
+ 19434 0140 0693     		str	r3, [sp, #24]
+  76:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryBaseAddr = (int)out_buf;
+ 19435              		.loc 1 76 0
+ 19436 0142 094B     		ldr	r3, .L9+8
+ 19437              		.loc 1 78 0
+ 19438 0144 0648     		ldr	r0, .L9
+  76:../src/radio.c **** 	DMA_InitStruct.DMA_MemoryBaseAddr = (int)out_buf;
+ 19439              		.loc 1 76 0
+ 19440 0146 0293     		str	r3, [sp, #8]
+  77:../src/radio.c **** 	DMA_InitStruct.DMA_Priority = DMA_Priority_VeryHigh;
+ 19441              		.loc 1 77 0
+ 19442 0148 4FF44053 		mov	r3, #12288
+ 19443 014c 0A93     		str	r3, [sp, #40]
+ 19444              		.loc 1 78 0
+ 19445 014e FFF7FEFF 		bl	DMA_Init
+  79:../src/radio.c **** 	DMA_Cmd( DMA1_Channel5, ENABLE );
+ 19446              		.loc 1 79 0
+ 19447 0152 0348     		ldr	r0, .L9
+ 19448 0154 0121     		movs	r1, #1
+ 19449 0156 FFF7FEFF 		bl	DMA_Cmd
+  80:../src/radio.c **** }
+ 19450              		.loc 1 80 0
+ 19451 015a 0DB0     		add	sp, sp, #52
+ 19452 015c 00BD     		pop	{pc}
+ 19453              	.L10:
+ 19454 015e 00BF     		.align	2
+ 19455              	.L9:
+ 19456 0160 58000240 		.word	1073872984
+ 19457 0164 10580040 		.word	1073764368
+ 19458 0168 00000000 		.word	.LANCHOR0
+ 19459              		.cfi_endproc
+ 19460              	.LFE32:
+ 19462              		.align	1
+ 19463              		.global	sendData
+ 19464              		.thumb
+ 19465              		.thumb_func
+ 19467              	sendData:
+ 19468              	.LFB33:
+  81:../src/radio.c **** 
+  82:../src/radio.c **** void sendData() {
+ 19469              		.loc 1 82 0
+ 19470              		.cfi_startproc
+ 19471              		@ args = 0, pretend = 0, frame = 0
+ 19472              		@ frame_needed = 0, uses_anonymous_args = 0
+ 19473 016c 10B5     		push	{r4, lr}
+ 19474              	.LCFI6:
+ 19475              		.cfi_def_cfa_offset 8
+ 19476              	.L12:
+  83:../src/radio.c **** 	while(I2C_GetFlagStatus( I2C2, I2C_FLAG_BUSY ));
+ 19477              		.loc 1 83 0 discriminator 1
+ 19478 016e 1B48     		ldr	r0, .L16
+ 19479 0170 4FF40031 		mov	r1, #131072
+ 19480              		.cfi_offset 14, -4
+ 19481              		.cfi_offset 4, -8
+ 19482 0174 FFF7FEFF 		bl	I2C_GetFlagStatus
+ 19483 0178 0028     		cmp	r0, #0
+ 19484 017a F8D1     		bne	.L12
+  84:../src/radio.c **** 	I2C_GenerateSTART( I2C2, ENABLE );
+ 19485              		.loc 1 84 0
+ 19486 017c 1748     		ldr	r0, .L16
+ 19487 017e 0121     		movs	r1, #1
+ 19488 0180 FFF7FEFF 		bl	I2C_GenerateSTART
+ 19489              	.L13:
+  85:../src/radio.c **** 	while( !I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_MODE_SELECT) );
+ 19490              		.loc 1 85 0 discriminator 1
+ 19491 0184 1548     		ldr	r0, .L16
+ 19492 0186 1649     		ldr	r1, .L16+4
+ 19493 0188 FFF7FEFF 		bl	I2C_CheckEvent
+ 19494 018c 0028     		cmp	r0, #0
+ 19495 018e F9D0     		beq	.L13
+  86:../src/radio.c **** 	I2C_Send7bitAddress( I2C2, FM_WRITE_ADDRESS, I2C_Direction_Transmitter );
+ 19496              		.loc 1 86 0
+ 19497 0190 1248     		ldr	r0, .L16
+ 19498 0192 C021     		movs	r1, #192
+ 19499 0194 0022     		movs	r2, #0
+ 19500 0196 FFF7FEFF 		bl	I2C_Send7bitAddress
+ 19501              	.L14:
+  87:../src/radio.c **** 	while( !I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED) );
+ 19502              		.loc 1 87 0 discriminator 1
+ 19503 019a 1048     		ldr	r0, .L16
+ 19504 019c 1149     		ldr	r1, .L16+8
+ 19505 019e FFF7FEFF 		bl	I2C_CheckEvent
+ 19506 01a2 0028     		cmp	r0, #0
+ 19507 01a4 F9D0     		beq	.L14
+  88:../src/radio.c **** 	I2C_SendData( I2C2, out_buf[0] );
+ 19508              		.loc 1 88 0
+ 19509 01a6 104B     		ldr	r3, .L16+12
+ 19510 01a8 0C48     		ldr	r0, .L16
+ 19511 01aa 1978     		ldrb	r1, [r3, #0]	@ zero_extendqisi2
+ 19512 01ac FFF7FEFF 		bl	I2C_SendData
+ 19513              	.L15:
+  89:../src/radio.c **** 	while( !I2C_CheckEvent(I2C2, I2C_EVENT_MASTER_BYTE_TRANSMITTED) );
+ 19514              		.loc 1 89 0 discriminator 1
+ 19515 01b0 0A48     		ldr	r0, .L16
+ 19516 01b2 0E49     		ldr	r1, .L16+16
+ 19517 01b4 FFF7FEFF 		bl	I2C_CheckEvent
+ 19518 01b8 0028     		cmp	r0, #0
+ 19519 01ba F9D0     		beq	.L15
+  90:../src/radio.c **** 
+  91:../src/radio.c **** 	/* Enable the DMA Channel4 Transfer Complete IT */
+  92:../src/radio.c **** 	DMA_ITConfig(DMA1_Channel4, DMA_IT_TC | DMA_IT_TE, ENABLE);
+ 19520              		.loc 1 92 0
+ 19521 01bc 0A21     		movs	r1, #10
+ 19522 01be 0122     		movs	r2, #1
+ 19523 01c0 0B48     		ldr	r0, .L16+20
+ 19524 01c2 FFF7FEFF 		bl	DMA_ITConfig
+  93:../src/radio.c **** 	I2C_DMACmd(I2C2, ENABLE);
+ 19525              		.loc 1 93 0
+ 19526 01c6 0121     		movs	r1, #1
+ 19527 01c8 0448     		ldr	r0, .L16
+ 19528 01ca FFF7FEFF 		bl	I2C_DMACmd
+  94:../src/radio.c **** 	DMA_Cmd( DMA1_Channel4, ENABLE );
+ 19529              		.loc 1 94 0
+ 19530 01ce 0848     		ldr	r0, .L16+20
+ 19531 01d0 0121     		movs	r1, #1
+  95:../src/radio.c **** 
+  96:../src/radio.c **** }
+ 19532              		.loc 1 96 0
+ 19533 01d2 BDE81040 		pop	{r4, lr}
+  94:../src/radio.c **** 	DMA_Cmd( DMA1_Channel4, ENABLE );
+ 19534              		.loc 1 94 0
+ 19535 01d6 FFF7FEBF 		b	DMA_Cmd
+ 19536              	.L17:
+ 19537 01da 00BF     		.align	2
+ 19538              	.L16:
+ 19539 01dc 00580040 		.word	1073764352
+ 19540 01e0 01000300 		.word	196609
+ 19541 01e4 82000700 		.word	458882
+ 19542 01e8 00000000 		.word	.LANCHOR0
+ 19543 01ec 84000700 		.word	458884
+ 19544 01f0 44000240 		.word	1073872964
+ 19545              		.cfi_endproc
+ 19546              	.LFE33:
+ 19548              		.data
+ 19549              		.set	.LANCHOR0,. + 0
+ 19552              	out_buf:
+ 19553 0000 F0       		.byte	-16
+ 19554 0001 2C       		.byte	44
+ 19555 0002 D0       		.byte	-48
+ 19556 0003 12       		.byte	18
+ 19557 0004 40       		.byte	64
+ 19558              		.text
+ 19559              	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 radio.c
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19166  .text:00000000 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19171  .text:00000000 init_i2c
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19265  .text:0000008c $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19271  .text:00000098 $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19276  .text:00000098 init_NVIC_out
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19318  .text:000000c2 init_DMA_out
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19387  .text:00000110 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19393  .text:0000011c $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19398  .text:0000011c init_DMA_in
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19456  .text:00000160 $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19462  .text:0000016c $t
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19467  .text:0000016c sendData
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19539  .text:000001dc $d
+C:\DOCUME~1\Przemek\USTAWI~1\Temp\cclGuvOj.s:19552  .data:00000000 out_buf
+                     .debug_frame:00000010 $d
+
+UNDEFINED SYMBOLS
+RCC_APB1PeriphClockCmd
+RCC_APB2PeriphClockCmd
+GPIO_Init
+I2C_SoftwareResetCmd
+I2C_ITConfig
+I2C_StructInit
+I2C_DeInit
+I2C_Init
+I2C_Cmd
+NVIC_SetVectorTable
+NVIC_Init
+RCC_AHBPeriphClockCmd
+DMA_DeInit
+DMA_StructInit
+DMA_Init
+DMA_Cmd
+I2C_GetFlagStatus
+I2C_GenerateSTART
+I2C_CheckEvent
+I2C_Send7bitAddress
+I2C_SendData
+DMA_ITConfig
+I2C_DMACmd
