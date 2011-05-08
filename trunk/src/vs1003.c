@@ -4,9 +4,13 @@
   * @author  Przemyslaw Stasiak
   * @version V0.1
   * @date    25/04/2011
-  * @brief   This file provides VS1003 chip usage and control functions.
+  * @brief   This file provides VS1003 usage and control functions.
   ******************************************************************************
 */
+
+/** @addtogroup VS1003
+  * @{
+  */
 
 #include "vs1003.h"
 
@@ -225,7 +229,7 @@ uint8_t 	VS1003_GetVolume(){
 }
 /**
  * Function sets the same volume level to both channels.
- * @param xMinusHalfdB: describes damping level as a multiple
+ * @param xMinusHalfdB describes damping level as a multiple
  * 		of 0.5dB. Maximum volume is 0 and silence is 0xFEFE.
  */
 void	VS1003_SetVolume(uint8_t xMinusHalfdB){
@@ -236,7 +240,7 @@ void	VS1003_SetVolume(uint8_t xMinusHalfdB){
  * Function increases volume level for both channels.
  * If it is impossible to increase volume as much as
  * xHalfdB, volume is set to maximum.
- * @param xHalfdB: multiple of 0.5dB describing how
+ * @param xHalfdB multiple of 0.5dB describing how
  * 		much volume should be turned up.
  */
 void 	VS1003_VolumeUp(uint8_t xHalfdB){
@@ -253,7 +257,7 @@ void 	VS1003_VolumeUp(uint8_t xHalfdB){
  * Function decreases volume level for both channels.
  * @note If it is impossible to decrease volume as much as
  * xHalfdB, volume is muted.
- * @param xHalfdB: multiple of 0.5dB describing how
+ * @param xHalfdB multiple of 0.5dB describing how
  * 		much volume should be turned down.
  */
 void	VS1003_VolumeDown(uint8_t xHalfdB){
@@ -268,7 +272,7 @@ void	VS1003_VolumeDown(uint8_t xHalfdB){
 }
 
 /**
- * Functions return level of treble enhancement.
+ * Functions returns level of treble enhancement.
  * @return Returned value describes enhancement in multiplies
  * 		of 1.5dB. 0 value means no enhancement, 8 max (12dB).
  */
@@ -296,7 +300,7 @@ void	VS1003_SetTreble(uint8_t xOneAndHalfdB){
  * Turns up treble.
  * @note If xOneAndHalfdB is greater than max value, sets treble
  * 		to maximum.
- * @param xOneAndHalfdB: describes how many dBs add to current treble level.
+ * @param xOneAndHalfdB describes how many dBs add to current treble level.
  *  	It is a multiplier of 1.5dB.
  * @return void
  */
@@ -311,9 +315,8 @@ void	VS1003_TrebleUp(uint8_t xOneAndHalfdB){
 
 /**
  * Turns down treble.
- * @note If xOneAndHalfdB is greater than min value, sets treble
- * 		to minimum - no enhancement.
- * @param xOneAndHalfdB: describes how many dBs subtract from current treble level.
+ * @note If it is impossible to decrease by xdB, the minimum value is set (off).
+ * @param xOneAndHalfdB describes how many dBs subtract from current treble level.
  *  	It is a multiplier of 1.5dB.
  * @return void
  */
@@ -328,7 +331,7 @@ void	VS1003_TrebleDown(uint8_t xOneAndHalfdB){
 /**
  * Sets low limit frequency of treble enhancer.
  * @note new frequency is set only if argument is valid.
- * @param xkHz: The lowest frequency enhanced by treble enhancer.
+ * @param xkHz The lowest frequency enhanced by treble enhancer.
  * 		Values from 0 to 15 (in kHz)
  * @return void
  */
@@ -390,7 +393,7 @@ void	VS1003_BassDown(uint8_t xdB){
 /**
  * Sets low limit frequency of bass enhancer.
  * @note new frequency is set only if argument is valid.
- * @param xTenHz: The lowest frequency enhanced by bass enhancer.
+ * @param xTenHz The lowest frequency enhanced by bass enhancer.
  * 		Values from 2 to 15 ( equal to 20 - 150 Hz).
  * @return void
  */
