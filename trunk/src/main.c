@@ -30,11 +30,14 @@ int main(void)
     DIR dirs;
     UINT bytes_saved;
 
+    uint16_t VOL;
+
 	clkInit();
 	pinSetup();
 
 	VS1003_GPIO_conf();
 	VS1003_SPI_conf();
+	//VS1003_SoftwareReset();
 	VS1003_Start();
 
 	SD_Nvic_conf();
@@ -55,11 +58,12 @@ int main(void)
 	{
 		if ( State == MP3_Player )
 		{
+			VOL = ReadRegister(SPI_VOL);
 			while(f_read(&fsrc, buffer, sizeof(buffer), &br) == 0)
 			{
 			SCI_ChipSelect(RESET);
 			SDI_ChipSelect(SET);
-			for (i=0;i<sizeof(buffer);i++)
+			for (i=0;i<br;i++)
 			{
 				while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
 				SPIPutChar(buffer[i]);

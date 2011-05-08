@@ -56,11 +56,29 @@
 #define SM_ADPCM_HP     	0x2000
 
 //public functions
-void VS1003_GPIO_conf();
-void VS1003_SPI_conf();
-void VS1003_SineTest();
-void VS1003_Start();
-void VS1003_SendMusicBytes(uint8_t* music,int quantity);
+void 	VS1003_GPIO_conf();
+void 	VS1003_SPI_conf();
+void 	VS1003_SineTest();
+void	VS1003_Start();
+void 	VS1003_SendMusicBytes(uint8_t* music,int quantity);
+void 	VS1003_SoftwareReset();
+//Volume control
+uint8_t 	VS1003_GetVolume();
+void	VS1003_SetVolume(uint8_t xMinusHalfdB);
+void 	VS1003_VolumeUp(uint8_t xHalfdB);
+void	VS1003_VolumeDown(uint8_t xHalfdB);
+//Treble control
+uint8_t	VS1003_GetTreble();
+void	VS1003_SetTreble(uint8_t xOneAndHalfdB);
+void	VS1003_TrebleUp(uint8_t xOneAndHalfdB);
+void	VS1003_TrebleDown(uint8_t xOneAndHalfdB);
+void	VS1003_SetTrebleFreq(uint8_t xkHz);
+//Bass control
+uint8_t	VS1003_GetBass();
+void	VS1003_SetBass(uint8_t xdB);
+void	VS1003_BassUp(uint8_t xdB);
+void	VS1003_BassDown(uint8_t xdB);
+void	VS1003_SetBassFreq(uint8_t xTenHz);
 
 //private functions
 uint8_t SPIPutChar(uint8_t outB);
@@ -70,7 +88,10 @@ void SCI_ChipSelect(uint8_t State);
 void SDI_ChipSelect(uint8_t State);
 void WriteRegister(uint8_t addressbyte,
 		uint8_t highbyte, uint8_t lowbyte);
+uint16_t ReadRegister(uint8_t addressbyte);
 void ResetChip();
+
+uint16_t MaskAndShiftRight(uint16_t Source, uint16_t Mask, uint16_t Shift);
 
 
 #endif /* VS1003_H_ */
