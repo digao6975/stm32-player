@@ -1,0 +1,131 @@
+\hypertarget{vs1003_8c}{
+\section{src/vs1003.c File Reference}
+\label{vs1003_8c}\index{src/vs1003.c@{src/vs1003.c}}
+}
+
+
+This file provides VS1003 chip usage and control functions.  
+
+
+{\ttfamily \#include \char`\"{}vs1003.h\char`\"{}}\par
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{group___v_s1003_ga285de9bda0f8fa0f1b447d9a64f798aa}{
+void {\bfseries VS1003\_\-GPIO\_\-conf} ()}
+\label{group___v_s1003_ga285de9bda0f8fa0f1b447d9a64f798aa}
+
+\item 
+\hypertarget{group___v_s1003_ga60719e9a42c5c0f05dbc5c2207c961a4}{
+void {\bfseries VS1003\_\-SPI\_\-conf} ()}
+\label{group___v_s1003_ga60719e9a42c5c0f05dbc5c2207c961a4}
+
+\item 
+\hypertarget{group___v_s1003_ga18a561ccd8da4a5b37c243172854f859}{
+uint8\_\-t {\bfseries SPIPutChar} (uint8\_\-t outB)}
+\label{group___v_s1003_ga18a561ccd8da4a5b37c243172854f859}
+
+\item 
+\hypertarget{group___v_s1003_gaa41821cf8fac113b09d880885f5e8efb}{
+void {\bfseries Delay} (uint32\_\-t nTime)}
+\label{group___v_s1003_gaa41821cf8fac113b09d880885f5e8efb}
+
+\item 
+\hypertarget{group___v_s1003_gad7986d53e5b54dc273d2995b72afdc11}{
+void {\bfseries ControlReset} (uint8\_\-t State)}
+\label{group___v_s1003_gad7986d53e5b54dc273d2995b72afdc11}
+
+\item 
+\hypertarget{group___v_s1003_gaf9ec54b39179082b5285b76b41344ea5}{
+void {\bfseries SCI\_\-ChipSelect} (uint8\_\-t State)}
+\label{group___v_s1003_gaf9ec54b39179082b5285b76b41344ea5}
+
+\item 
+\hypertarget{group___v_s1003_ga073775b9854b94e21324e85b9a613756}{
+void {\bfseries SDI\_\-ChipSelect} (uint8\_\-t State)}
+\label{group___v_s1003_ga073775b9854b94e21324e85b9a613756}
+
+\item 
+\hypertarget{group___v_s1003_gaa706493a0f88b1921954d641a31c0560}{
+void {\bfseries VS1003\_\-SineTest} ()}
+\label{group___v_s1003_gaa706493a0f88b1921954d641a31c0560}
+
+\item 
+\hypertarget{group___v_s1003_ga968b6abeabbf8e693ad4fc3af5619bea}{
+void {\bfseries WriteRegister} (uint8\_\-t addressbyte, uint8\_\-t highbyte, uint8\_\-t lowbyte)}
+\label{group___v_s1003_ga968b6abeabbf8e693ad4fc3af5619bea}
+
+\item 
+\hypertarget{group___v_s1003_gae51b9bfdc776a71e1c64ffc3503b2580}{
+uint16\_\-t {\bfseries ReadRegister} (uint8\_\-t addressbyte)}
+\label{group___v_s1003_gae51b9bfdc776a71e1c64ffc3503b2580}
+
+\item 
+\hypertarget{group___v_s1003_ga1b092c177915e46cae517600bf819cfd}{
+void {\bfseries ResetChip} ()}
+\label{group___v_s1003_ga1b092c177915e46cae517600bf819cfd}
+
+\item 
+\hypertarget{group___v_s1003_gadd5c859ee4ed93f5d83de7de2cc94241}{
+uint16\_\-t {\bfseries MaskAndShiftRight} (uint16\_\-t Source, uint16\_\-t Mask, uint16\_\-t Shift)}
+\label{group___v_s1003_gadd5c859ee4ed93f5d83de7de2cc94241}
+
+\item 
+\hypertarget{group___v_s1003_ga18c3607ab21c8fb7efe74b24fa38a78d}{
+void {\bfseries VS1003\_\-Start} ()}
+\label{group___v_s1003_ga18c3607ab21c8fb7efe74b24fa38a78d}
+
+\item 
+\hypertarget{group___v_s1003_gaa288639093463230709dfda6232b7bbf}{
+void {\bfseries VS1003\_\-SendMusicBytes} (uint8\_\-t $\ast$music, int quantity)}
+\label{group___v_s1003_gaa288639093463230709dfda6232b7bbf}
+
+\item 
+\hypertarget{group___v_s1003_gac6d1b4cad8488b1afd6d0ac377f2535c}{
+void {\bfseries VS1003\_\-SoftwareReset} ()}
+\label{group___v_s1003_gac6d1b4cad8488b1afd6d0ac377f2535c}
+
+\item 
+\hypertarget{group___v_s1003_ga109e7148f5f6b2307937456ebfccb492}{
+uint8\_\-t {\bfseries VS1003\_\-GetVolume} ()}
+\label{group___v_s1003_ga109e7148f5f6b2307937456ebfccb492}
+
+\item 
+void \hyperlink{group___v_s1003_gad9b32a2a7d63b711fc17d148604e3eab}{VS1003\_\-SetVolume} (uint8\_\-t xMinusHalfdB)
+\begin{DoxyCompactList}\small\item\em Function sets the same volume level to both channels. \end{DoxyCompactList}\item 
+void \hyperlink{group___v_s1003_ga4f95ce5237dcdc657dfa89517aab0cb9}{VS1003\_\-VolumeUp} (uint8\_\-t xHalfdB)
+\begin{DoxyCompactList}\small\item\em Function increases volume level for both channels. \end{DoxyCompactList}\item 
+void \hyperlink{group___v_s1003_gae47ed2e7d38334207d3b82e228a0d499}{VS1003\_\-VolumeDown} (uint8\_\-t xHalfdB)
+\begin{DoxyCompactList}\small\item\em Function decreases volume level for both channels. \end{DoxyCompactList}\item 
+uint8\_\-t \hyperlink{group___v_s1003_ga82d6c7066995fa8e0f395086189c8ac4}{VS1003\_\-GetTreble} ()
+\begin{DoxyCompactList}\small\item\em Functions return level of treble enhancement. \end{DoxyCompactList}\item 
+void \hyperlink{group___v_s1003_gaf1911e05279d10489cc24fa01c247ef9}{VS1003\_\-SetTreble} (uint8\_\-t xOneAndHalfdB)
+\begin{DoxyCompactList}\small\item\em Sets treble level. \end{DoxyCompactList}\item 
+void \hyperlink{group___v_s1003_ga417954b454482b4df25b52532671e59e}{VS1003\_\-TrebleUp} (uint8\_\-t xOneAndHalfdB)
+\begin{DoxyCompactList}\small\item\em Turns up treble. \end{DoxyCompactList}\item 
+void \hyperlink{group___v_s1003_ga43bb27c62418f64554a40effe99f8de0}{VS1003\_\-TrebleDown} (uint8\_\-t xOneAndHalfdB)
+\begin{DoxyCompactList}\small\item\em Turns down treble. \end{DoxyCompactList}\item 
+void \hyperlink{group___v_s1003_ga7c77395a44a6f0481de7f2afc5ec4274}{VS1003\_\-SetTrebleFreq} (uint8\_\-t xkHz)
+\begin{DoxyCompactList}\small\item\em Sets low limit frequency of treble enhancer. \end{DoxyCompactList}\item 
+uint8\_\-t \hyperlink{group___v_s1003_gab80c5a8b99562c02eba5098d2491f8db}{VS1003\_\-GetBass} ()
+\begin{DoxyCompactList}\small\item\em Returns level of bass boost in dB. \end{DoxyCompactList}\item 
+void \hyperlink{group___v_s1003_gac42d0ef8231b2ff53481392e550cc883}{VS1003\_\-SetBass} (uint8\_\-t xdB)
+\begin{DoxyCompactList}\small\item\em Sets bass enhancement level (in dB). \end{DoxyCompactList}\item 
+void \hyperlink{group___v_s1003_ga4080275852e38e61fe6be1805bf2b0eb}{VS1003\_\-BassUp} (uint8\_\-t xdB)
+\begin{DoxyCompactList}\small\item\em Increases level of bass enhancement. \end{DoxyCompactList}\item 
+void \hyperlink{group___v_s1003_gae7ef60bf1e76e77eeea4ef439c264a63}{VS1003\_\-BassDown} (uint8\_\-t xdB)
+\begin{DoxyCompactList}\small\item\em Decreases level of bass enhancement. \end{DoxyCompactList}\item 
+void \hyperlink{group___v_s1003_gad3f6df28630c57802acf538aa9461736}{VS1003\_\-SetBassFreq} (uint8\_\-t xTenHz)
+\begin{DoxyCompactList}\small\item\em Sets low limit frequency of bass enhancer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+This file provides VS1003 chip usage and control functions. \begin{DoxyAuthor}{Author}
+Przemyslaw Stasiak 
+\end{DoxyAuthor}
+\begin{DoxyVersion}{Version}
+V0.1 
+\end{DoxyVersion}
+\begin{DoxyDate}{Date}
+25/04/2011 
+\end{DoxyDate}
