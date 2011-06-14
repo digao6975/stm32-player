@@ -22,11 +22,13 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f10x_it.h"
-#include "main.h"
+//#include "main.h"
 #include "sdcard.h"
+#include "keyboard.h"
+
 extern void TimingDelay_Decrement(void);
 
-/** @addtogroup Template_Project
+/** @addtogroup Interrupt_Handlers
   * @{
   */
 
@@ -50,17 +52,50 @@ void NMI_Handler(void)
 {
 }
 
-/**
-  * @brief  This function handles Hard Fault exception.
-  * @param  None
-  * @retval None
-  */
 void I2C2_ER_IRQHandler(void){
 	uint16_t sr1,sr2;
 	sr1 = I2C_ReadRegister(I2C2,I2C_Register_SR2);
 	sr2 = I2C_ReadRegister(I2C2,I2C_Register_SR1);
 }
 
+void TIM2_IRQHandler(){
+
+	if (TIM_GetITStatus(TIM2,TIM_IT_CC1))
+	{
+		TIM_ClearITPendingBit(TIM2,TIM_IT_CC1);
+		TIM_ITConfig(TIM2, TIM_IT_CC1, DISABLE);
+		TIM_Cmd(TIM2,DISABLE);
+		Keyboard_Test_ROW(ROW1);
+	}
+	else if (TIM_GetITStatus(TIM2,TIM_IT_CC2))
+	{
+		TIM_ClearITPendingBit(TIM2,TIM_IT_CC2);
+		TIM_ITConfig(TIM2, TIM_IT_CC2, DISABLE);
+		TIM_Cmd(TIM2,DISABLE);
+		Keyboard_Test_ROW(ROW2);
+	}
+	else if (TIM_GetITStatus(TIM2,TIM_IT_CC3))
+	{
+		TIM_ClearITPendingBit(TIM2,TIM_IT_CC3);
+		TIM_ITConfig(TIM2, TIM_IT_CC2, DISABLE);
+		TIM_Cmd(TIM2,DISABLE);
+		Keyboard_Test_ROW(ROW3);
+	}
+	else if (TIM_GetITStatus(TIM2,TIM_IT_CC4))
+	{
+		TIM_ClearITPendingBit(TIM2,TIM_IT_CC4);
+		TIM_ITConfig(TIM2, TIM_IT_CC4, DISABLE);
+		TIM_Cmd(TIM2,DISABLE);
+		Keyboard_Test_ROW(ROW4);
+	}
+	Keyboard_Set_All_Columns();
+	EXTI_ClearFlag(EXTI_Line2 | EXTI_Line3 | EXTI_Line4 | EXTI_Line5 );
+}
+/**
+  * @brief  This function handles Hard Fault exception.
+  * @param  None
+  * @retval None
+  */
 void HardFault_Handler(void)
 {
   /* Go to infinite loop when Hard Fault exception occurs */
@@ -141,15 +176,7 @@ void PendSV_Handler(void)
 {
 }
 
-/**
-  * @brief  This function handles SysTick Handler.
-  * @param  None
-  * @retval None
-  */
-void SysTick_Handler(void)
-{
-	GPIO_WriteBit(LED1_PORT,LED1_PIN,!GPIO_ReadInputDataBit(LED1_PORT,LED1_PIN));
-}
+
 
 /******************************************************************************/
 /*                 STM32F10x Peripherals Interrupt Handlers                   */
@@ -158,6 +185,58 @@ void SysTick_Handler(void)
 /*  file (startup_stm32f10x_xx.s).                                            */
 /******************************************************************************/
 
+/**
+ * Handler for ROW1 of matrix keyboard
+ */
+void EXTI2_IRQHandler(){
+	if (EXTI_GetITStatus(EXTI_Line2) != RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line2);
+		EXTI_ClearFlag(EXTI_Line2);
+		TIM_SetCompare1(TIM2, 100); // 100 * [1/(72MHz / 36 000)] = 50ms
+		Keyboard_Timer_Start();
+		TIM_ITConfig(TIM2, TIM_IT_CC1, ENABLE);
+	}
+}
+/**
+ * Handler for ROW2 of matrix keyboard
+ */
+void EXTI3_IRQHandler(){
+	if (EXTI_GetITStatus(EXTI_Line3) != RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line3);
+		EXTI_ClearFlag(EXTI_Line3);
+		TIM_SetCompare2(TIM2, 100); // 100 * [1/(72MHz / 36 000)] = 50ms
+		Keyboard_Timer_Start();
+		TIM_ITConfig(TIM2, TIM_IT_CC2, ENABLE);
+	}
+}
+/**
+ * Handler for ROW3 of matrix keyboard
+ */
+void EXTI4_IRQHandler(){
+	if (EXTI_GetITStatus(EXTI_Line4) != RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line4);
+		EXTI_ClearFlag(EXTI_Line4);
+		TIM_SetCompare3(TIM2, 100); // 100 * [1/(72MHz / 36 000)] = 50ms
+		Keyboard_Timer_Start();
+		TIM_ITConfig(TIM2, TIM_IT_CC3, ENABLE);
+	}
+}
+/**
+ * Handler for ROW4 of matrix keyboard
+ */
+void EXTI9_5_IRQHandler(){
+	if (EXTI_GetITStatus(EXTI_Line5) != RESET)
+	{
+		EXTI_ClearITPendingBit(EXTI_Line5);
+		EXTI_ClearFlag(EXTI_Line5);
+		TIM_SetCompare4(TIM2, 100); // 100 * [1/(72MHz / 36 000)] = 50ms
+		Keyboard_Timer_Start();
+		TIM_ITConfig(TIM2, TIM_IT_CC4, ENABLE);
+	}
+}
 /**
   * @brief  This function handles PPP interrupt request.
   * @param  None

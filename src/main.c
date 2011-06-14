@@ -1,15 +1,23 @@
 
 /* Includes */
 #include <stddef.h>
+#include <string.h>
 #include "stm32f10x.h"
 #include "main.h"
+#include "keyboard.h"
+#include "uart.h"
+
+
 
 
 SD_CardInfo SDCardInfo;
 SD_Error Status = SD_OK;
 BYTE buffer[1024]; // file copy buffer
+volatile unsigned int count = 0;
+uint16_t poprawka = 0;
 
-System_Function State = MP3_Player;
+
+System_Function State = MP3_Player_1st_Run;
 /**
 **===========================================================================
 **
@@ -19,7 +27,7 @@ System_Function State = MP3_Player;
 */
 int main(void)
 {
-	char path[50]={""};
+
 	int i;
 	FATFS fs;            		// Work area (file system object) for logical drive
     FIL fsrc, fdst;      		// file objects
@@ -29,56 +37,217 @@ int main(void)
     FILINFO finfo;
     DIR dirs;
     UINT bytes_saved;
+    uint8_t key_pressed;
 
-    uint16_t VOL;
+//    uint16_t VOL;
 
 	clkInit();
 	pinSetup();
 
+	Keyboard_Pin_setup();
+	Keyboard_Extern_Interrupts_Setup();
+	Keyboard_Timer_Setup();
+
+	USART_GPIO_Conf();
+//	USART_NVIC_Conf();
+	USART_config();
+
 	VS1003_GPIO_conf();
 	VS1003_SPI_conf();
-	//VS1003_SoftwareReset();
+
 	VS1003_Start();
 
 	SD_Nvic_conf();
 	SD_Config();
 
-	//temporary
-	disk_initialize(0);
-	res = f_mount(0, &fs);
-	res = f_opendir(&dirs, path);
-	//res = f_open(&fdst, "test.txt", FA_CREATE_ALWAYS);
-	//res = f_close(&fdst);
-	res = f_open(&fsrc, "test.mp3", FA_READ);
-	//res = f_write(&fdst,"testuje",7,&bytes_saved);
-	//res = f_close(&fdst);
-	//SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);
-	//SysTick_Config(9000000);
+	Keyboard_Set_All_Columns();
+
 	while (1)
 	{
 		if ( State == MP3_Player )
 		{
-			VOL = ReadRegister(SPI_VOL);
-			while(f_read(&fsrc, buffer, sizeof(buffer), &br) == 0)
+			if(f_read(&fsrc, buffer, sizeof(buffer), &br) == 0)
 			{
 			SCI_ChipSelect(RESET);
 			SDI_ChipSelect(SET);
 			for (i=0;i<br;i++)
-			{
-				while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
-				SPIPutChar(buffer[i]);
-			}
-			/*
-			res = f_read(&fsrc, buffer, sizeof(buffer), &br);
-			if (res == 0 && br != 0 )
-			VS1003_SendMusicBytes(buffer,br);
-			else
-				break;
-			*/
-			}
-		}
+				{
+					while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+					SPIPutChar(buffer[i]);
+				}
 
+			}
+			//End of file
+			if(br == 0)
+			{
+				Next_Track(&fsrc,&dirs,&finfo);
+			}
+			Maintain_Player_Keyboard_Event(&fsrc,&dirs,&finfo);
+
+		}
+		else if( State == MP3_Player_1st_Run)
+		{
+			disk_initialize(0);
+			res = f_mount(0, &fs);
+			res = f_opendir(&dirs, "");
+			Next_Track(&fsrc,&dirs,&finfo);
+			State = MP3_Player;
+		}
+		else if( State == MP3_Player_Paused)
+		{
+			Maintain_Player_Keyboard_Event(&fsrc,&dirs,&finfo);
+		}
 	}
+}
+
+void Send_Playback_Time(){
+    char time_buf[12]="";
+	uint8_t sekundy;
+	uint8_t minuty;
+	uint16_t playback_time = VS1003_GetDecodeTime() - poprawka;
+	minuty = playback_time / 60;
+	sekundy = playback_time%60;
+	intToStr(time_buf,minuty);
+	USART_Send("Czas odtwarzania: ");
+	USART_Send(time_buf);
+	USART_Send(":");
+	intToStr(time_buf,sekundy);
+	USART_Send(time_buf);
+	USART_Send("\r\n");
+
+}
+
+void Send_Bitrate(){
+    char bitr_buf[3]="";
+    USART_Send("Przeplywnosc:     ");
+    intToStr(bitr_buf,VS1003_GetBitrate());
+    USART_Send(bitr_buf);
+	USART_Send(" kbit/s\r\n");
+}
+
+void Send_Samplerate(){
+	 char samp_buf[5]="";
+	 USART_Send("Probkowanie:      ");
+	 intToStr(samp_buf,VS1003_GetSampleRate());
+	 USART_Send(samp_buf);
+	 USART_Send(" Hz\r\n");
+}
+
+void Send_Volume(){
+	uint8_t vol = VS1003_GetVolume();
+	char vol_buf[3]="";
+	USART_Send("Glosnosc:         -");
+	intToStr(vol_buf,vol/2);
+	USART_Send(vol_buf);
+	if (vol%2!=0)
+		USART_Send(",5 dB\r\n");
+	else
+		USART_Send(" dB\r\n");
+}
+
+void Maintain_Player_Keyboard_Event(FIL* File, DIR* Directory, FILINFO* File_Info){
+	uint8_t Last_Keyboard_Event = Get_Key_Value();
+	if(Last_Keyboard_Event != Nothing_PRESSED)
+	{
+		switch(Last_Keyboard_Event){
+		case VOL_UP:
+			VS1003_VolumeUp(1);
+			break;
+		case VOL_DOWN:
+			VS1003_VolumeDown(1);
+			break;
+		case BASS_UP:
+			VS1003_BassUp(1);
+			break;
+		case BASS_DOWN:
+			VS1003_BassDown(1);
+			break;
+		case TREBLE_UP:
+			VS1003_TrebleUp(1);
+			break;
+		case TREBLE_DOWN:
+			VS1003_TrebleDown(1);
+			break;
+		case NEXT_TRACK:
+			Next_Track(File,Directory,File_Info);
+			break;
+		case PLAY_PAUSE:
+			if(State == MP3_Player)
+				State = MP3_Player_Paused;
+			else if(State == MP3_Player_Paused)
+				State = MP3_Player;
+			break;
+		case SEND_UART:
+			USART_Clean_Screen();
+			Send_Playback_Time();
+			Send_Bitrate();
+			Send_Samplerate();
+			Send_Volume();
+		}
+	}
+}
+/*
+ * @brief Switching to the next track in current directory.
+ * 	If it is last file, jumps to first.
+ * 	@param	File: Pointer to file object.
+ * 	@param	Directory: Pointer to opened directory object;
+ * 	@param	File_Info: Pointer to FILINFO object in which information
+ * 		will be stored.
+ */
+
+void Next_Track(FIL* File, DIR* Directory, FILINFO* File_Info){
+	FRESULT res = FR_OK;
+
+	while(res == FR_OK){
+		res = f_readdir(Directory,File_Info);
+		if (res == FR_OK && File_Info->fname[0])
+		{
+			if (IsPlayable(File_Info->fname))
+			{	if (State != MP3_Player_1st_Run)
+				{
+					res = f_close(File);
+				}
+				res = f_open(File, File_Info->fname, FA_READ);
+				if (res == FR_OK)
+				{
+					// 4 zeros between streams, as VS1003 datasheet says
+					while(GPIO_ReadInputDataBit(DREQ_PORT,DREQ_PIN) == 0);
+					SPIPutChar(0);
+					SPIPutChar(0);
+					SPIPutChar(0);
+					SPIPutChar(0);
+					poprawka = VS1003_GetDecodeTime();
+					break;
+				}
+				else
+				{
+					//routines for file opening error
+					while(1);
+				}
+			}
+
+		}
+		else
+		{
+			//End of directory, jumping to its beginning
+			res = f_opendir(Directory, "");
+			if (res == FR_OK)
+			{
+				Next_Track(File,Directory,File_Info);
+			}
+
+		}
+	}
+
+
+}
+
+uint8_t IsPlayable(char* File_Name){
+	uint8_t result = FALSE;
+	if (strstr(File_Name,".MP3") || strstr(File_Name,".WMA") || strstr(File_Name,".MID")
+			||strstr(File_Name,".mp3") || strstr(File_Name,".wma") || strstr(File_Name,".mid"))
+		result = TRUE;
+	return result;
 }
 
 
@@ -212,6 +381,41 @@ void assert_failed(uint8_t* file, uint32_t line)
   }
 }
 #endif
+/**
+  * @brief  This function handles SysTick Handler.
+  * @param  None
+  * @retval None
+  */
+void SysTick_Handler(void)
+{
+	if(count) count--;
+}
+
+void intToStr(char * string,int n)
+{
+     int i = 0;
+     int j = 0;
+     char tmp[12]="";
+     char ret[12]="";
+     if(n < 0) {
+          ret[0] = '-';
+          i++;
+          n = -n;
+     }
+     do {
+          tmp[j] = n % 10 + 48;
+          n -= n % 10;
+          if(n > 9) j++;
+     }
+     while(n /= 10);
+     while(j>=0)
+     {
+    	 ret[i] = tmp[j];
+    	 i++;
+    	 j--;
+     }
+     strcpy(string,ret);
+}
 
 /*
  * Minimal __assert_func used by the assert() macro
