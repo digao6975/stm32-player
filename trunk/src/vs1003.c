@@ -247,7 +247,7 @@ void 	VS1003_VolumeUp(uint8_t xHalfdB){
 	uint8_t currentVol = VS1003_GetVolume();
 
 	//if it is impossible to turn volume up as we want
-	if ( currentVol - xHalfdB > currentVol )
+	if ( (uint8_t)(currentVol - xHalfdB) > currentVol )
 		VS1003_SetVolume(0);
 	else
 		VS1003_SetVolume(currentVol - xHalfdB);
@@ -307,10 +307,10 @@ void	VS1003_SetTreble(uint8_t xOneAndHalfdB){
 void	VS1003_TrebleUp(uint8_t xOneAndHalfdB){
 	uint8_t currentTreble = VS1003_GetTreble();
 
-	if (currentTreble + xOneAndHalfdB >= 8)
-		VS1003_SetTreble(8);
+	if ((uint8_t)(currentTreble - xOneAndHalfdB) > currentTreble)
+		VS1003_SetTreble(0);
 	else
-		VS1003_SetTreble(currentTreble + xOneAndHalfdB);
+		VS1003_SetTreble(currentTreble - xOneAndHalfdB);
 }
 
 /**
@@ -323,10 +323,10 @@ void	VS1003_TrebleUp(uint8_t xOneAndHalfdB){
 void	VS1003_TrebleDown(uint8_t xOneAndHalfdB){
 	uint8_t currentTreble = VS1003_GetTreble();
 
-	if (currentTreble - xOneAndHalfdB > currentTreble)
-		VS1003_SetTreble(0);
+	if (currentTreble + xOneAndHalfdB >= 8)
+		VS1003_SetTreble(8);
 	else
-		VS1003_SetTreble(currentTreble - xOneAndHalfdB);
+		VS1003_SetTreble(currentTreble + xOneAndHalfdB);
 }
 /**
  * Sets low limit frequency of treble enhancer.
@@ -401,4 +401,56 @@ void	VS1003_SetBassFreq(uint8_t xTenHz){
 	uint16_t bassReg = ReadRegister(SPI_BASS);
 	if (xTenHz >=2 && xTenHz <= 15)
 		WriteRegister(SPI_BASS, MaskAndShiftRight(bassReg,0xFF00,8), (bassReg & 0x00F0) | xTenHz );
+}
+
+uint16_t	VS1003_GetDecodeTime(){
+	return ReadRegister(SPI_DECODE_TIME);
+}
+
+uint16_t	VS1003_GetBitrate(){
+	uint16_t bitrate = (ReadRegister(SPI_HDAT0) & 0b1111000000000000) >> 12;
+	uint8_t ID = (ReadRegister(SPI_HDAT1) & 0b0000000000011000) >> 3;
+	uint16_t res;
+	if (ID == 3)
+	{	res = 32;
+		while(bitrate>13)
+		{
+			res+=64;
+			bitrate--;
+		}
+		while (bitrate>9)
+		{
+			res+=32;
+			bitrate--;
+		}
+		while (bitrate>5)
+		{
+			res+=16;
+			bitrate--;
+		}
+		while (bitrate>1)
+		{
+			res+=8;
+			bitrate--;
+		}
+	}
+	else
+	{	res = 8;
+
+		while (bitrate>8)
+		{
+			res+=16;
+			bitrate--;
+		}
+		while (bitrate>1)
+		{
+			res+=8;
+			bitrate--;
+		}
+	}
+	return res;
+}
+
+uint16_t	VS1003_GetSampleRate(){
+	return (ReadRegister(SPI_AUDATA) & 0xFFFE);
 }

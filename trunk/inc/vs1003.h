@@ -62,6 +62,10 @@ void 	VS1003_SineTest();
 void	VS1003_Start();
 void 	VS1003_SendMusicBytes(uint8_t* music,int quantity);
 void 	VS1003_SoftwareReset();
+uint16_t	VS1003_GetBitrate();
+uint16_t	VS1003_GetSampleRate();
+uint16_t	VS1003_GetDecodeTime();
+
 //Volume control
 uint8_t 	VS1003_GetVolume();
 void	VS1003_SetVolume(uint8_t xMinusHalfdB);
